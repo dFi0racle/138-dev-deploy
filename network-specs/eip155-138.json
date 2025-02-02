@@ -1,0 +1,21 @@
+{
+  "name": "DeFi Oracle Network",
+  "chainId": 138,
+  "networkId": 138,
+  "consensus": {
+    "type": "poa",
+    "algorithm": "clique",
+    "period": 15,
+    "epoch": 30000
+  },
+  "nonce": "0x0",
+  "timestamp": "0x0",
+  "gasLimit": "0x47b760",
+  "difficulty": "0x1",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {},
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}

@@ -1,0 +1,51 @@
+{
+  "config": {
+    "chainId": 138,
+    "homesteadBlock": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "mergeForkBlock": 0,
+    "clique": {
+      "period": 15,
+      "epoch": 30000,
+      "regionValidation": true
+    }
+  },
+  "alloc": {
+    "0x6B0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3B": { "balance": "0x3314550000000000000000" },
+    "0x7B0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3C": { "balance": "0x3314550000000000000000" },
+    "0x8B0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3D": { "balance": "0x3314550000000000000000" },
+    "0x9B0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3E": { "balance": "0xFFFFFFFFFFFF" },
+    "0xAB0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3F": { "balance": "0xFFFFFFFFFFFF" },
+    "0xBB0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3G": { "balance": "0xFFFFFF" },
+    "0xCB0c56d1Ad5144b4d37fa6e27DC9afd5C2435c3H": { "balance": "0xFFFFFF" },
+    "0xOracleContractAddress": { "balance": "0x0" },
+    "0xAMBContractAddress": { "balance": "0x0" },
+    "0xMulticall3Address": { "balance": "0x0" },
+    "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85": { "balance": "0x0" }
+  },
+  "nonce": "0x0000000000000042",
+  "timestamp": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "extraData": "0x446566692d4f7261636c652d4d6574610000000000000000000000000000000000",
+  "gasLimit": "0x1000000",
+  "difficulty": "0x400000000",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "regionConfig": {
+    "syncThreshold": 3,
+    "minRegions": 2,
+    "heartbeatInterval": 5,
+    "maxRegionLag": 10,
+    "crossRegionValidators": true
+  },
+  "networkId": 1
+}

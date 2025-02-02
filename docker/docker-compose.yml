@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  eth-node:
+    build: .
+    ports:
+      - "127.0.0.1:8545:8545"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: npx hardhat node
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    networks:
+      - bridge-network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - bridge-network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - bridge-network
+    depends_on:
+      - prometheus
+
+networks:
+  bridge-network:
+    driver: bridge
+
+volumes:
+  node_modules:
+  grafana-storage:

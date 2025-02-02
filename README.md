@@ -1,26 +1,41 @@
-# 138-Chain Development Environment Setup Guide
+# 138-Chain Deployment
 
-This documentation describes the complete process and environment configuration for setting up a development box that will be used to develop and test a 138-blockchain deployment.
+This project sets up a development environment for deploying a 138-chain ecosystem. The deployment includes forking the Ethereum Mainnet, integrating two-way Tether contracts, mirroring transactions to Polygon PoS, and bootstrapping a full suite of on-chain contracts.
 
-## Key Components
+## Prerequisites
 
-- Ethereum Mainnet Fork for development and testing
-- Two-way Tether contracts with Mainnet integration
-- Transaction mirroring to Polygon PoS
-- Genesis block bootstrapping with essential contracts (Oracle, AMB, Multicall3, etc.)
+- Linux (x86_64), macOS (Intel processor), or Windows (64-bit with WSL2)
+- Docker and Docker Compose
+- Node.js (v12 or higher)
+- Git
+- cURL
 
-## Documentation Structure
+## Setup
 
-- [Overview](docs/01-overview.md)
-- [Prerequisites](docs/02-prerequisites.md)
-- [Dev Box Configuration](docs/03-devbox-config.md)
-- [Forking Ethereum Mainnet](docs/04-mainnet-fork.md)
-- [Deploying Two-Way Tether Contracts](docs/05-tether-contracts.md)
-- [Transaction Mirroring](docs/06-transaction-mirroring.md)
-- [Genesis Contract Deployment](docs/07-genesis-deployment.md)
-- [Testing and Verification](docs/08-testing.md)
-- [Troubleshooting & Next Steps](docs/09-troubleshooting.md)
+1. Install dependencies:
+```sh
+npm install
+```
 
-## Getting Started
+2. Configure Hardhat:
+```sh
+npx hardhat node
+```
 
-Start by reviewing the [Prerequisites](docs/02-prerequisites.md) and then follow each section in order to set up your development environment.
+3. Deploy contracts:
+```sh
+npx hardhat run scripts/deploy.js
+```
+
+## Testing
+
+```sh
+npx hardhat test
+```
+
+## Directory Structure
+
+- `contracts/`: Solidity contract files
+- `scripts/`: Deployment scripts
+- `test/`: Test files
+- `docker/`: Docker configuration
