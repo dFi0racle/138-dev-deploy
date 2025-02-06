@@ -1,7 +1,7 @@
 {
   "name": "138-chain-deployment",
   "version": "1.0.0",
-  "packageManager": "pnpm",
+  "packageManager": "pnpm@8.15.4",
   "description": "Development environment for deploying a 138-chain ecosystem",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
