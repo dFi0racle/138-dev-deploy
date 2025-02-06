@@ -1,7 +1,7 @@
 {
   "name": "138-chain-deployment",
   "version": "1.0.0",
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm",
   "description": "Development environment for deploying a 138-chain ecosystem",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -61,7 +61,7 @@
     "solidity-coverage": "^0.8.14"
   },
   "engines": {
-    "node": ">=16.20.2",
+    "node": "18.12.1",
     "pnpm": ">=8.15.4 <9.0.0"
   },
   "license": "MIT"
