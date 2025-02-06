@@ -64,3 +64,5 @@ npm run test:integration
 # Run all tests
 npm run test
 ```
+
+## Security

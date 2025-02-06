@@ -2,10 +2,14 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require("dotenv").config();
+require("@nomicfoundation/hardhat-toolbox");
+require("hardhat-gas-reporter");
+require("hardhat-contract-sizer");
+require("@typechain/hardhat");
 
 module.exports = {
   solidity: {
-    version: "0.8.17",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -18,7 +22,8 @@ module.exports = {
       forking: {
         url: process.env.MAINNET_RPC_URL,
         blockNumber: 13000000
-      }
+      },
+      chainId: 1337
     },
     polygon: {
       url: process.env.POLYGON_RPC_URL,
@@ -35,5 +40,9 @@ module.exports = {
   },
   mocha: {
     timeout: 40000
+  },
+  typechain: {
+    outDir: "types",
+    target: "ethers-v6"
   }
 };

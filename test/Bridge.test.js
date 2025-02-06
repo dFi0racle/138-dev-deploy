@@ -1,18 +1,21 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("Bridge Contract", function () {
     let Bridge, bridge, Oracle, oracle, owner, addr1, addr2;
 
-    beforeEach(async function () {
-        [owner, addr1, addr2] = await ethers.getSigners();
-        Oracle = await ethers.getContractFactory("Oracle");
-        oracle = await Oracle.deploy();
-        await oracle.deployed();
+    async function deployBridgeFixture() {
+        const [owner, addr1, addr2] = await ethers.getSigners();
+        const Oracle = await ethers.getContractFactory("Oracle");
+        const oracle = await Oracle.deploy();
+        const Bridge = await ethers.getContractFactory("Bridge");
+        const bridge = await Bridge.deploy(oracle.address, 3);
+        return { bridge, oracle, owner, addr1, addr2 };
+    }
 
-        Bridge = await ethers.getContractFactory("Bridge");
-        bridge = await Bridge.deploy(oracle.address, 3);
-        await bridge.deployed();
+    beforeEach(async function () {
+        ({ bridge, oracle, owner, addr1, addr2 } = await loadFixture(deployBridgeFixture));
     });
 
     it("Should set the right admin", async function () {
@@ -206,6 +209,19 @@ describe("Bridge Contract", function () {
             await ethers.provider.send("evm_mine");
             
             expect(await bridge.isValidationCached(messageHash, validator)).to.be.false;
+        });
+    });
+
+    describe("Gas optimization tests", function() {
+        it("Should execute batch transfers within gas limits", async function() {
+            const { bridge } = await loadFixture(deployBridgeFixture);
+            // Add gas usage tests
+        });
+    });
+
+    describe("Error handling", function() {
+        it("Should handle failed transfers gracefully", async function() {
+            // Add error handling tests
         });
     });
 

@@ -1,33 +1,31 @@
 version: '3.8'
 
 services:
-  eth-node:
+  node:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runtime
     ports:
       - "127.0.0.1:8545:8545"
     volumes:
       - .:/app:ro
       - node_modules:/app/node_modules
-    command: npx hardhat node
-    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - HARDHAT_NETWORK=localhost
+    command: pnpm node
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          memory: 512M
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    read_only: true
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 2G
-        reservations:
-          memory: 512M
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8545"]
       interval: 30s
@@ -40,35 +38,33 @@ services:
         max-size: "200m"
         max-file: "10"
     networks:
-      - bridge-network
+      - blockchain-net
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     ports:
       - "127.0.0.1:9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus
     networks:
-      - bridge-network
+      - blockchain-net
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
     networks:
-      - bridge-network
+      - blockchain-net
     depends_on:
       - prometheus
 
 networks:
-  bridge-network:
+  blockchain-net:
     driver: bridge
     internal: true
 
 volumes:
   node_modules:
-    driver: local
   grafana-storage:
-    driver: local
