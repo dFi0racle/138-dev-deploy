@@ -1,4 +1,4 @@
-import { ProposalClient } from '@openzeppelin/defender-sdk-proposal-client';
+import { ProposalClient, ProposalResponse } from '@openzeppelin/defender-sdk-proposal-client';
 import { ethers } from 'hardhat';
 import { ChainConfigs } from '../../config/chains';
 
@@ -15,12 +15,13 @@ async function main() {
         console.log(`Creating proposal for ${chain.name}...`);
 
         const proposal = await client.create({
-            via: process.env.DEFENDER_RELAYER_ADDRESS || '',
-            viaType: 'Relayer',
             title: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
             description: `Deploys and configures CCIPBridge and Reporter contracts on ${chain.name} (Chain ID: ${chain.id})`,
             type: 'upgrade',
-            functionSignature: 'upgrade()',
+            via: {
+                type: 'EOA',
+                address: process.env.DEFENDER_RELAYER_ADDRESS || ''
+            },
             metadata: {
                 chainId: chain.id.toString(),
                 router: chain.router,

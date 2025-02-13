@@ -27,7 +27,7 @@ interface TestContext {
 
 import { BaseContract, ContractTransactionResponse } from "ethers";
 
-interface ITestContract {
+interface ITestContract extends BaseContract {
     address: string;
     grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
     REPORTER_ROLE(): Promise<string>;
@@ -38,6 +38,7 @@ interface ITestContract {
     };
     queryFilter(filter: any): Promise<any[]>;
     deploymentTransaction(): ContractTransactionResponse;
+    deploy(...args: any[]): Promise<ITestContract>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
