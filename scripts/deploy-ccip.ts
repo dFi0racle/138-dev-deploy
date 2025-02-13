@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { ChainConfigs, RouterAddresses } from "../config/chains";
-import { Client as RelayClient } from "@openzeppelin/defender-sdk-relay-client";
-import { DefenderRelayProvider, DefenderRelaySigner } from "@openzeppelin/defender-sdk-base-client";
+import { RelayClient } from "@openzeppelin/defender-sdk-relay-client";
+import { Wallet, JsonRpcProvider } from "ethers";
 
 async function main() {
     console.log("Deploying CCIP Bridge with Defender...");
@@ -31,8 +31,8 @@ async function main() {
     };
     
     const relay = new RelayClient(credentials);
-    const provider = new DefenderRelayProvider(credentials);
-    const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
+    const provider = new JsonRpcProvider(chainConfig.rpcUrls[0]);
+    const signer = new Wallet(process.env.PRIVATE_KEY || '', provider);
     
     // Deploy CCIPBridge
     const CCIPBridge = await ethers.getContractFactory("CCIPBridge");
