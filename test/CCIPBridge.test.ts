@@ -27,6 +27,14 @@ interface ITestContract extends BaseContract {
     connect(signer: any): ITestContract;
     attach(address: string): ITestContract;
     deployed(): Promise<ITestContract>;
+    deploymentTransaction(): ContractTransactionResponse;
+    
+    // Direct method access
+    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
+    REPORTER_ROLE(): Promise<string>;
+    supportedChains(selector: bigint): Promise<boolean>;
+    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
+    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
