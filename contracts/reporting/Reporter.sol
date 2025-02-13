@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "../interfaces/IReporter.sol";
+import "../interfaces/IMarketData.sol";
 import "../security/AccessControl.sol";
 import "../security/Pausable.sol";
 
@@ -10,13 +11,11 @@ import "../security/Pausable.sol";
  * @notice Implementation of the Reporter interface for market data integration
  * @dev Handles reporting to CoinGecko, CoinMarketCap, and GeckoTerminal
  */
-contract Reporter is IReporter, AccessControl, Pausable {
+contract Reporter is IReporter, IMarketData, AccessControl, Pausable {
     bytes32 public constant REPORTER_ROLE = keccak256("REPORTER_ROLE");
     
     // Mapping to store the latest reported data
-    mapping(address => uint256) public latestPrices;
-    mapping(address => uint256) public latestVolumes;
-    mapping(address => uint256) public latestTVLs;
+    mapping(address => MarketUpdate) public latestMarketData;
     mapping(address => uint256) public lastUpdateTimestamp;
     
     // Minimum time between updates
@@ -110,6 +109,59 @@ contract Reporter is IReporter, AccessControl, Pausable {
         emit HistoricalDataReported(token, startTime, endTime, timestamps.length);
     }
     
+    /**
+     * @notice Reports market data for a token
+     * @param update The market data update
+     */
+    function reportMarketData(MarketUpdate calldata update) external override onlyReporter whenNotPaused {
+        require(update.timestamp > lastUpdateTimestamp[update.token] + MIN_UPDATE_INTERVAL, "Update too frequent");
+        
+        latestMarketData[update.token] = update;
+        lastUpdateTimestamp[update.token] = update.timestamp;
+        
+        emit MarketDataUpdated(
+            update.token,
+            update.price,
+            update.volume24h,
+            update.tvl,
+            update.timestamp,
+            update.source
+        );
+    }
+
+    /**
+     * @notice Reports market data for multiple tokens
+     * @param updates Array of market data updates
+     */
+    function batchReportMarketData(MarketUpdate[] calldata updates) external override onlyReporter whenNotPaused {
+        for (uint256 i = 0; i < updates.length; i++) {
+            MarketUpdate calldata update = updates[i];
+            require(update.timestamp > lastUpdateTimestamp[update.token] + MIN_UPDATE_INTERVAL, "Update too frequent");
+            
+            latestMarketData[update.token] = update;
+            lastUpdateTimestamp[update.token] = update.timestamp;
+            
+            emit MarketDataUpdated(
+                update.token,
+                update.price,
+                update.volume24h,
+                update.tvl,
+                update.timestamp,
+                update.source
+            );
+        }
+    }
+
+    /**
+     * @notice Gets the latest market data for a token
+     * @param token The token address
+     * @return The latest market update
+     */
+    function getLatestMarketData(address token) external view override returns (MarketUpdate memory) {
+        return latestMarketData[token];
+    }
+
+
     function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
