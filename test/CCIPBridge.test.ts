@@ -8,21 +8,21 @@ type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: 
 
 interface ITestContract extends Contract {
     // Contract methods
-    grantRole: BaseContractMethod<[string, string], ContractTransactionResponse>;
-    REPORTER_ROLE: BaseContractMethod<[], string>;
-    supportedChains: BaseContractMethod<[bigint], boolean>;
-    bridgeToken: BaseContractMethod<[string, bigint, number], ContractTransactionResponse>;
-    sendMessage: BaseContractMethod<[bigint, string, string], ContractTransactionResponse>;
+    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
+    REPORTER_ROLE(): Promise<string>;
+    supportedChains(selector: bigint): Promise<boolean>;
+    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
+    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
     
     // Event filters
     filters: {
-        MarketDataUpdated: () => any;
-        TokensSent: () => any;
-        MessageSent: () => any;
+        MarketDataUpdated(): any;
+        TokensSent(): any;
+        MessageSent(): any;
     };
     
     // Query events
-    queryFilter: (filter: any) => Promise<any[]>;
+    queryFilter(filter: any): Promise<any[]>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;

@@ -15,12 +15,14 @@ async function main() {
         console.log(`Creating proposal for ${chain.name}...`);
 
         const proposal = await client.create({
-            name: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
-            description: `Deploys and configures CCIPBridge and Reporter contracts on ${chain.name} (Chain ID: ${chain.id})`,
-            type: 'upgrade',
-            address: process.env.DEFENDER_RELAYER_ADDRESS || '',
+            contractAddress: process.env.DEFENDER_RELAYER_ADDRESS || '',
             network: chain.name.toLowerCase(),
+            type: 'upgrade',
             functionSignature: 'upgrade()',
+            via: {
+                type: 'Relayer',
+                address: process.env.DEFENDER_RELAYER_ADDRESS || ''
+            },
             metadata: {
                 chainId: chain.id.toString(),
                 router: chain.router,
