@@ -71,7 +71,7 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         expression: `balance < ${minBalanceThreshold}`
                     }],
                     txCondition: '',
-                    functionCondition: '',
+                    functionConditions: [],
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -100,7 +100,7 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         expression: null
                     }],
                     txCondition: '',
-                    functionCondition: '',
+                    functionConditions: [],
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
