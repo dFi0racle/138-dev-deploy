@@ -23,9 +23,6 @@ dependencies:
   '@nomicfoundation/hardhat-verify':
     specifier: ^2.0.12
     version: 2.0.12(hardhat@2.22.18)
-  '@openzeppelin/contracts':
-    specifier: ^5.2.0
-    version: 5.2.0
   '@typechain/ethers-v6':
     specifier: ^0.5.0
     version: 0.5.1(ethers@6.13.5)(typechain@8.3.2)(typescript@5.7.3)
@@ -58,6 +55,9 @@ dependencies:
     version: 4.16.0(typescript@5.7.3)
 
 devDependencies:
+  '@openzeppelin/contracts':
+    specifier: ^5.0.0
+    version: 5.0.0
   '@types/chai':
     specifier: ^4.3.11
     version: 4.3.20
@@ -797,9 +797,9 @@ packages:
     resolution: {integrity: sha512-xSmezSupL+y9VkHZJGDoCBpmnB2ogM13ccaYDWqJTfS3dbuHkgjuwDFUmaFauBCboQMGB/S5UqUl2y54X99BmA==}
     dev: false
 
-  /@openzeppelin/contracts@5.2.0:
-    resolution: {integrity: sha512-bxjNie5z89W1Ea0NZLZluFh8PrFNn9DH8DQlujEok2yjsOlraUPKID5p1Wk3qdNbf6XkQ1Os2RvfiHrrXLHWKA==}
-    dev: false
+  /@openzeppelin/contracts@5.0.0:
+    resolution: {integrity: sha512-bv2sdS6LKqVVMLI5+zqnNrNU/CA+6z6CmwFXm/MzmOPBRSO5reEJN7z0Gbzvs0/bv/MZZXNklubpwy3v2+azsw==}
+    dev: true
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
