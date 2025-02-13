@@ -58,9 +58,16 @@ jobs:
         network: [ethereum, polygon, arbitrum, optimism, avalanche, bsc, base, gnosis, fantom, metis]
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: 10.3.0
+          run_install: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.18.3'
+          cache: 'pnpm'
       - name: Deploy to network
         env:
           NETWORK: ${{ matrix.network }}
