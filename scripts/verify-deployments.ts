@@ -1,6 +1,9 @@
 import { ethers, run } from "hardhat";
 import { ChainConfigs } from "../config/chains";
-import { Client as RelayClient } from "@openzeppelin/defender-sdk-relay-client";
+import { RelayClient } from "@openzeppelin/defender-sdk-relay-client";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+declare const hre: HardhatRuntimeEnvironment;
 
 async function main() {
     console.log("Verifying contract deployments across networks...");
@@ -14,7 +17,7 @@ async function main() {
     for (const chain of Object.values(ChainConfigs)) {
         console.log(`\nVerifying ${chain.name}...`);
         
-        const provider = new RelayClient(credentials);
+        const relay = new RelayClient(credentials);
         
         try {
             // Get contract addresses from environment
@@ -27,7 +30,7 @@ async function main() {
             }
 
             // Verify contract code
-            await hre.run("verify:verify", {
+            await run("verify:verify", {
                 address: bridgeAddress,
                 constructorArguments: [
                     chain.router,
@@ -37,7 +40,7 @@ async function main() {
                 ]
             });
 
-            await hre.run("verify:verify", {
+            await run("verify:verify", {
                 address: reporterAddress,
                 constructorArguments: []
             });
