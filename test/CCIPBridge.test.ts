@@ -101,7 +101,7 @@ describe("CCIPBridge", function () {
 
     describe("Message Passing", function () {
         it("should support arbitrary message passing", async function () {
-            const message = ethers.utils.defaultAbiCoder.encode(
+            const message = ethers.AbiCoder.defaultAbiCoder().encode(
                 ["string", "uint256", "bytes"],
                 ["TestMessage", 123, "0x1234"]
             );
