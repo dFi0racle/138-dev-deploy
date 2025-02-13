@@ -51,7 +51,9 @@ jobs:
           version: 8.15.4
       - name: Deploy to network
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          POLYGON_RPC_URL: ${{ secrets.POLYGON_RPC_URL }}
+          NETWORK: ${{ matrix.network }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
+          DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
-        run: pnpm run deploy
+        run: pnpm hardhat run scripts/deploy-ccip.ts --network ${{ matrix.network }}
