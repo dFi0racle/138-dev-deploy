@@ -6,7 +6,7 @@ import { ChainConfigs } from "../config/chains";
 
 type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: TArgs) => Promise<TResult>;
 
-interface ITestContract extends BaseContract {
+interface ITestContract extends Omit<Contract, 'connect' | 'attach' | 'deployed' | 'queryFilter'> {
     // Contract methods
     grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
     REPORTER_ROLE: () => Promise<string>;
@@ -21,11 +21,9 @@ interface ITestContract extends BaseContract {
     queryFilter: (filter: any) => Promise<any[]>;
     
     // Contract properties
-    address: string;
     connect: (signer: any) => ITestContract;
     attach: (address: string) => ITestContract;
     deployed: () => Promise<ITestContract>;
-    deploymentTransaction: () => ContractTransactionResponse;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
