@@ -1,8 +1,8 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-ethers");
 require("solidity-coverage");
 require("dotenv").config();
-require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
 require("hardhat-contract-sizer");
 require("@typechain/hardhat");

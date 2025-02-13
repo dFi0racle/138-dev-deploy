@@ -31,15 +31,14 @@
   },
   "dependencies": {
     "@ensdomains/ens-contracts": "^1.2.5",
-    "@ethersproject/abi": "^5.7.0",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.12",
     "@openzeppelin/contracts": "^5.2.0",
     "@typechain/ethers-v6": "^0.5.0",
     "@typechain/hardhat": "^9.0.0",
-    "chai": "^5.1.2",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "glob": "^10.3.10",
@@ -50,14 +49,22 @@
     "web3": "^4.16.0"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.12",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.19",
+    "chai": "^4.3.10",
     "hardhat": "^2.22.18",
     "hardhat-contract-sizer": "^2.10.0",
     "mocha": "^10.2.0",
     "prettier": "^3.4.2",
     "prettier-plugin-solidity": "^1.4.2",
     "solhint": "^5.0.5",
-    "solidity-coverage": "^0.8.14"
+    "solidity-coverage": "^0.8.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": "18.12.1",
