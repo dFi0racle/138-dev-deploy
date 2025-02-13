@@ -70,8 +70,8 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: `balance < ${minBalanceThreshold}`
                     }],
-                    txCondition: null,
-                    functionCondition: null,
+                    txCondition: undefined,
+                    functionCondition: undefined,
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -99,8 +99,8 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: null
                     }],
-                    txCondition: null,
-                    functionCondition: null,
+                    txCondition: undefined,
+                    functionCondition: undefined,
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);

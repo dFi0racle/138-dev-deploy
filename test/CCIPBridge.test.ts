@@ -112,9 +112,10 @@ describe("CCIPBridge", function () {
                 message
             );
 
-            const events = await ccipBridge.queryFilter(ccipBridge.filters.MessageSent());
+            const events = await context.ccipBridge.queryFilter(context.ccipBridge.filters.MessageSent());
             expect(events.length).to.equal(1);
-            expect(events[0].args.message).to.equal(message);
+            const args = (events[0] as any).args;
+            expect(args.message).to.equal(message);
         });
     });
 });
