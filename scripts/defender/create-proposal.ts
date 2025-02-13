@@ -1,7 +1,6 @@
-import { ProposalClient } from '@openzeppelin/defender-sdk-proposal-client';
+import { ProposalClient, CreateProposalRequest } from '@openzeppelin/defender-sdk-proposal-client';
 import { ethers } from 'hardhat';
 import { ChainConfigs } from '../../config/chains';
-import { ProposalResponse } from '@openzeppelin/defender-sdk-base-client';
 
 async function main() {
     const credentials = {
@@ -15,7 +14,7 @@ async function main() {
     for (const chain of Object.values(ChainConfigs)) {
         console.log(`Creating proposal for ${chain.name}...`);
 
-        const proposal = await client.create({
+        const proposalRequest: CreateProposalRequest = {
             contract: {
                 network: chain.name.toLowerCase(),
                 address: process.env.DEFENDER_RELAYER_ADDRESS || ''
@@ -25,12 +24,13 @@ async function main() {
             type: 'upgrade',
             via: process.env.DEFENDER_RELAYER_ADDRESS || '',
             viaType: 'Relayer',
-            functionSignature: 'upgrade()',
-            functionInputs: [],
-            metadata: {
-                network: chain.name.toLowerCase()
+            functionInterface: {
+                name: 'upgrade',
+                inputs: []
             }
-        });
+        };
+        
+        const proposal = await client.create(proposalRequest);
 
         console.log(`Created proposal ${proposal.proposalId} for ${chain.name}`);
     }
