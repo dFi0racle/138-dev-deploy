@@ -4,15 +4,16 @@ import { parseEther, Contract, ContractTransactionResponse, BaseContract, EventF
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-interface ITestContract extends Contract {
-    interface: ContractInterface;
-    functions: {
-        grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
-        REPORTER_ROLE(): Promise<string>;
-        supportedChains(selector: bigint): Promise<boolean>;
-        bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
-        sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
-    };
+interface ITestContract extends BaseContract {
+    connect(signer: Signer): ITestContract;
+    attach(address: string): ITestContract;
+    deployed(): Promise<ITestContract>;
+    
+    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
+    REPORTER_ROLE(): Promise<string>;
+    supportedChains(selector: bigint): Promise<boolean>;
+    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
+    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
     // Contract methods
     grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
     REPORTER_ROLE(): Promise<string>;
