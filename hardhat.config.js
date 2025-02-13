@@ -7,6 +7,9 @@ require("hardhat-gas-reporter");
 require("hardhat-contract-sizer");
 require("@typechain/hardhat");
 
+const { resolve } = require("path");
+const nodeModulesPath = resolve(__dirname, "node_modules");
+
 module.exports = {
   solidity: {
     version: "0.8.20",
@@ -17,17 +20,24 @@ module.exports = {
       }
     }
   },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+    node_modules: nodeModulesPath
+  },
   networks: {
     hardhat: {
-      forking: {
-        url: process.env.MAINNET_RPC_URL,
-        blockNumber: 13000000
-      },
-      chainId: 1337
+      chainId: 1337,
+      mining: {
+        auto: true,
+        interval: 0
+      }
     },
     polygon: {
-      url: process.env.POLYGON_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY].filter(Boolean)
+      url: "https://polygon-mainnet.g.alchemy.com/v2/demo",
+      accounts: []
     }
   },
   etherscan: {
