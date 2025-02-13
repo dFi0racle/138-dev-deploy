@@ -42,6 +42,8 @@ jobs:
           RPC_URL: ${{ secrets.RPC_URL }}
           DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
           DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
+          DEFENDER_TEAM_API_KEY: ${{ secrets.DEFENDER_TEAM_API_KEY }}
+          DEFENDER_TEAM_SECRET_KEY: ${{ secrets.DEFENDER_TEAM_SECRET_KEY }}
         with:
           args: --severity-threshold=high
           
