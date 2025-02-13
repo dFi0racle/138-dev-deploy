@@ -6,7 +6,7 @@ import { ChainConfigs } from "../config/chains";
 
 type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: TArgs) => Promise<TResult>;
 
-interface ITestContract extends BaseContract {
+interface ITestContract extends Contract {
     // Contract methods
     functions: {
         grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
@@ -30,11 +30,11 @@ interface ITestContract extends BaseContract {
     deploymentTransaction(): ContractTransactionResponse;
     
     // Direct method access
-    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
-    REPORTER_ROLE(): Promise<string>;
-    supportedChains(selector: bigint): Promise<boolean>;
-    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
-    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
+    grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
+    REPORTER_ROLE: () => Promise<string>;
+    supportedChains: (selector: bigint) => Promise<boolean>;
+    bridgeToken: (token: string, amount: bigint, chainId: number) => Promise<ContractTransactionResponse>;
+    sendMessage: (selector: bigint, target: string, message: string) => Promise<ContractTransactionResponse>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
