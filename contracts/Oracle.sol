@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./security/AccessControl.sol";
 import "./interfaces/IOracle.sol";
 
 contract Oracle is IOracle, AccessControl {
