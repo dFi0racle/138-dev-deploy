@@ -25,12 +25,25 @@ jobs:
       - run: pnpm install
       - run: pnpm run lint
       - run: pnpm test
+        env:
+          NETWORK: ${{ matrix.network }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
+          DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
       - run: pnpm run coverage
+        env:
+          NETWORK: ${{ matrix.network }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
+          DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
 
   deploy:
     needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [ethereum, polygon, arbitrum, optimism, avalanche, bsc, base, gnosis, fantom, metis]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
