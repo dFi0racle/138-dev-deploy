@@ -5,7 +5,9 @@ import { Contract } from "@ethersproject/contracts";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-interface ContractFactory {
+import { ContractFactory as EthersContractFactory } from "ethers";
+
+interface ContractFactory extends EthersContractFactory {
     deploy(...args: any[]): Promise<Contract>;
 }
 
