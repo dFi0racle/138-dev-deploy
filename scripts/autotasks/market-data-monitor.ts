@@ -3,7 +3,7 @@ import { MonitorClient } from '@openzeppelin/defender-sdk-monitor-client';
 import { RelayClient } from '@openzeppelin/defender-sdk-relay-client';
 import { ExternalCreateBlockMonitorRequest } from '@openzeppelin/defender-sdk-monitor-client/lib/models/monitor';
 import { Result } from '@ethersproject/abi';
-import { ethers } from 'ethers';
+import { ethers, JsonRpcProvider } from 'ethers';
 import { ChainConfigs } from '../../config/chains';
 import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
 import CCIPBridgeABI from '../../artifacts/contracts/bridges/CCIPBridge.sol/CCIPBridge.json';
@@ -27,14 +27,14 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
 
         // Initialize providers for each supported network
         const providers = MONITOR_CONFIG.supportedNetworks.map(network => {
-            const config = ChainConfigs[network];
+            const config = ChainConfigs[network.toUpperCase() as keyof typeof ChainConfigs];
             if (!config) throw new Error(`Network ${network} not configured`);
-            return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
+            return new JsonRpcProvider(config.rpcUrls[0]);
         });
 
         // Get contract instances for each supported network
         const contracts = MONITOR_CONFIG.supportedNetworks.map((network, index) => {
-            const chain = ChainConfigs[network];
+            const chain = ChainConfigs[network.toUpperCase() as keyof typeof ChainConfigs];
             if (!chain) throw new Error(`Network ${network} not configured`);
             const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
             const reporterAddress = process.env[`REPORTER_${chain.name.toUpperCase()}`];
@@ -56,14 +56,16 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
             type: 'BLOCK',
             name: 'Market Data Monitor',
             network: 'ethereum', // Monitor on Ethereum mainnet
-            addresses: contracts.map(c => c.reporter.address),
+            addresses: contracts.map(c => c.reporter.target),
             abi: JSON.stringify(ReporterABI.abi),
             notificationChannels: ['email'],
             paused: false,
-            conditions: [{
+            eventConditions: [{
                 eventSignature: 'MarketDataUpdated(address,uint256,uint256,uint256,uint256,string)',
                 expression: null
             }],
+            txCondition: '',
+            functionCondition: '',
             riskCategory: 'TECHNICAL'
         };
         await defender.monitor.create(monitorRequest);
