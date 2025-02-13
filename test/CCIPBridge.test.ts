@@ -29,11 +29,11 @@ type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
 type DeployedContract = ITestContract;
 
 interface TestContext {
-    ccipBridge: ITestContract;
-    reporter: ITestContract;
+    ccipBridge: DeployedContract;
+    reporter: DeployedContract;
     owner: any;
     user: any;
-    router: ITestContract;
+    router: DeployedContract;
 }
 
 describe("CCIPBridge", function () {
