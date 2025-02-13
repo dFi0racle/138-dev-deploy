@@ -70,4 +70,5 @@ jobs:
           DEFENDER_TEAM_API_KEY: ${{ secrets.DEFENDER_TEAM_API_KEY }}
           DEFENDER_TEAM_SECRET_KEY: ${{ secrets.DEFENDER_TEAM_SECRET_KEY }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+          ETHERSCAN_TETHER_API_KEY: ${{ secrets.ETHERSCAN_TETHER_API_KEY }}
         run: pnpm hardhat run scripts/deploy-ccip.ts --network ${{ matrix.network }}
