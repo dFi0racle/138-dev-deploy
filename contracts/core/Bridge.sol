@@ -3,8 +3,10 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IBridge.sol";
 import "../interfaces/IOracle.sol";
+import "../security/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Bridge is IBridge {
+contract Bridge is IBridge, AccessControl {
     IOracle public oracle;
     mapping(address => bool) public validators;
     uint256 public required;
@@ -58,14 +60,18 @@ contract Bridge is IBridge {
     mapping(bytes32 => uint256) public validationTimestamps;
 
     constructor(address _oracle, uint256 _required) {
+        require(_oracle != address(0), "Invalid oracle address");
+        require(_required > 0, "Required validators must be > 0");
+        
         oracle = IOracle(_oracle);
         required = _required;
         admin = msg.sender;
-        validators[msg.sender] = true;
         transferLimit = 1000 ether; // Default limit
         fee = 0.001 ether; // Default fee of 0.001 ETH
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(OPERATOR_ROLE, msg.sender);
+        
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(OPERATOR_ROLE, msg.sender);
+        _setupRole(VALIDATOR_ROLE, msg.sender);
     }
 
     modifier onlyAdmin() {
@@ -93,6 +99,8 @@ contract Bridge is IBridge {
         // Implementation details
         emit Transfer(bytes32(uint256(uint160(msg.sender))), to, amount);
     }
+
+    uint256 private nonce;
 
     function validateTransfer(
         bytes32 from,
@@ -162,13 +170,13 @@ contract Bridge is IBridge {
     }
 
     // Replace validator mapping with roles
-    function addValidator(address validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-        _grantRole(VALIDATOR_ROLE, validator);
+    function addValidator(address validator) external override onlyRole(getRoleAdmin(VALIDATOR_ROLE)) {
+        grantRole(VALIDATOR_ROLE, validator);
         emit ValidatorAdded(validator);
     }
 
-    function removeValidator(address validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-        _revokeRole(VALIDATOR_ROLE, validator);
+    function removeValidator(address validator) external override onlyRole(getRoleAdmin(VALIDATOR_ROLE)) {
+        revokeRole(VALIDATOR_ROLE, validator);
         emit ValidatorRemoved(validator);
     }
 
