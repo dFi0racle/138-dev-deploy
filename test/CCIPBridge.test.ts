@@ -1,9 +1,11 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { parseEther } from "ethers";
-import { Contract, ContractFactory } from "ethers";
+import { Contract } from "@ethersproject/contracts";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
+
+type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
 
 interface TestContext {
     ccipBridge: Contract;
