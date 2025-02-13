@@ -4,16 +4,22 @@ import { parseEther, Contract, ContractTransactionResponse, BaseContract, EventF
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-interface ITestContract extends BaseContract {
-    connect(signer: Signer): ITestContract;
-    attach(address: string): ITestContract;
-    deployed(): Promise<ITestContract>;
+interface ITestContract extends Contract {
+    functions: {
+        grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
+        REPORTER_ROLE(): Promise<string>;
+        supportedChains(selector: bigint): Promise<boolean>;
+        bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
+        sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
+    };
     
-    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
-    REPORTER_ROLE(): Promise<string>;
-    supportedChains(selector: bigint): Promise<boolean>;
-    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
-    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
+    filters: {
+        MarketDataUpdated(token?: string, price?: bigint, volume24h?: bigint, tvl?: bigint, timestamp?: number, source?: string): EventFilter;
+        TokensSent(token?: string, amount?: bigint, chainId?: number): EventFilter;
+        MessageSent(selector?: bigint, target?: string, message?: string): EventFilter;
+    };
+    
+    queryFilter(filter: EventFilter): Promise<any[]>;
     // Contract methods
     grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
     REPORTER_ROLE(): Promise<string>;
