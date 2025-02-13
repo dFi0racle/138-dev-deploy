@@ -32,6 +32,11 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
     event ChainAdded(uint64 indexed chainSelector);
     event ChainRemoved(uint64 indexed chainSelector);
     
+    // Market data events for external reporting
+    event PriceUpdated(address indexed reporter, uint256 price);
+    event VolumeUpdated(address indexed reporter, uint256 volume);
+    event TVLUpdated(address indexed reporter, uint256 tvl);
+    
     // Roles
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant FEE_MANAGER_ROLE = keccak256("FEE_MANAGER_ROLE");
@@ -167,9 +172,37 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
         if (!supportedChains[sourceChainSelector]) revert UnsupportedChain(sourceChainSelector);
         
         processedMessages[messageId] = true;
-        emit MessageReceived(messageId, sourceChainSelector, abi.decode(sender, (address)));
+        address senderAddress = abi.decode(sender, (address));
+        emit MessageReceived(messageId, sourceChainSelector, senderAddress);
         
-        // Process message - implementation specific to use case
+        // Process message based on type
+        bytes4 selector = abi.decode(message[0:4], (bytes4));
+        
+        if (selector == bytes4(keccak256("price(uint256)"))) {
+            (uint256 price) = abi.decode(message[4:], (uint256));
+            _handlePriceUpdate(senderAddress, price);
+        } else if (selector == bytes4(keccak256("volume(uint256)"))) {
+            (uint256 volume) = abi.decode(message[4:], (uint256));
+            _handleVolumeUpdate(senderAddress, volume);
+        } else if (selector == bytes4(keccak256("tvl(uint256)"))) {
+            (uint256 tvl) = abi.decode(message[4:], (uint256));
+            _handleTVLUpdate(senderAddress, tvl);
+        }
+    }
+    
+    function _handlePriceUpdate(address reporter, uint256 price) internal {
+        emit PriceUpdated(reporter, price);
+        // Integration point for CoinGecko/CMC reporting
+    }
+    
+    function _handleVolumeUpdate(address reporter, uint256 volume) internal {
+        emit VolumeUpdated(reporter, volume);
+        // Integration point for volume tracking
+    }
+    
+    function _handleTVLUpdate(address reporter, uint256 tvl) internal {
+        emit TVLUpdated(reporter, tvl);
+        // Integration point for TVL tracking
     }
     
     // Admin functions
