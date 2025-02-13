@@ -1,7 +1,15 @@
-import { AutotaskClient } from 'defender-autotask-client';
-import { RelayClient } from 'defender-relay-client';
+import { 
+    DefenderRelayProvider,
+    DefenderRelaySigner,
+    RelayerParams
+} from '@openzeppelin/defender-sdk/lib/relay';
+import { 
+    AutotaskClient,
+    RelayClient 
+} from '@openzeppelin/defender-sdk/lib/client';
 import { ethers } from 'ethers';
 import { ChainConfigs } from '../../config/chains';
+import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
 import CCIPBridgeABI from '../../artifacts/contracts/bridges/CCIPBridge.sol/CCIPBridge.json';
 import ReporterABI from '../../artifacts/contracts/reporting/Reporter.sol/Reporter.json';
 
@@ -14,16 +22,23 @@ const ENDPOINTS = {
 
 // Autotask entry point
 export async function handler(credentials) {
-    const autotaskClient = new AutotaskClient(credentials);
-    const relayClient = new RelayClient(credentials);
+    // Initialize Defender clients
+    const provider = new DefenderRelayProvider(credentials);
+    const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
+    const autotaskClient = new AutotaskClient(defenderConfig);
+    const relayClient = new RelayClient(defenderConfig);
 
-    // Initialize providers for each chain
-    const providers = Object.values(ChainConfigs).map(chain => {
-        return new ethers.providers.JsonRpcProvider(chain.rpcUrls[0]);
+    // Initialize providers for each supported network
+    const providers = supportedNetworks.map(network => {
+        const config = ChainConfigs[network];
+        if (!config) throw new Error(`Network ${network} not configured`);
+        return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
     });
 
-    // Get contract instances for each chain
-    const contracts = Object.values(ChainConfigs).map((chain, index) => {
+    // Get contract instances for each supported network
+    const contracts = supportedNetworks.map((network, index) => {
+        const chain = ChainConfigs[network];
+        if (!chain) throw new Error(`Network ${network} not configured`);
         const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
         const reporterAddress = process.env[`REPORTER_${chain.name.toUpperCase()}`];
         

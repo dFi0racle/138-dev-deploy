@@ -1,27 +1,47 @@
-import { AutotaskClient } from 'defender-autotask-client';
-import { RelayClient } from 'defender-relay-client';
+import { 
+    DefenderRelayProvider,
+    DefenderRelaySigner,
+    RelayerParams
+} from '@openzeppelin/defender-sdk/lib/relay';
+import { 
+    AutotaskClient,
+    RelayClient 
+} from '@openzeppelin/defender-sdk/lib/client';
 import { ethers } from 'ethers';
 import { ChainConfigs } from '../../config/chains';
+import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
 import CCIPBridgeABI from '../../artifacts/contracts/bridges/CCIPBridge.sol/CCIPBridge.json';
 
-// Monitoring thresholds
-const THRESHOLDS = {
-    MAX_PENDING_TRANSFERS: 100,
-    MAX_TRANSFER_AGE: 3600, // 1 hour
-    MIN_BALANCE_THRESHOLD: ethers.utils.parseEther('1.0')
-};
+// Initialize Defender clients
+const autotaskClient = new AutotaskClient(defenderConfig);
+const relayClient = new RelayClient(defenderConfig);
+
+// Use monitoring configuration from defender config
+const {
+    maxPendingTransfers,
+    maxTransferAge,
+    minBalanceThreshold,
+    healthCheckInterval,
+    alertThreshold,
+    supportedNetworks
+} = MONITOR_CONFIG;
 
 export async function handler(credentials) {
-    const autotaskClient = new AutotaskClient(credentials);
-    const relayClient = new RelayClient(credentials);
+    // Initialize Defender clients
+    const provider = new DefenderRelayProvider(credentials);
+    const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
 
-    // Initialize providers for each chain
-    const providers = Object.values(ChainConfigs).map(chain => {
-        return new ethers.providers.JsonRpcProvider(chain.rpcUrls[0]);
+    // Initialize providers for each supported network
+    const providers = supportedNetworks.map(network => {
+        const config = ChainConfigs[network];
+        if (!config) throw new Error(`Network ${network} not configured`);
+        return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
     });
 
-    // Monitor bridge contracts on each chain
-    for (const chain of Object.values(ChainConfigs)) {
+    // Monitor bridge contracts on each supported network
+    for (const network of supportedNetworks) {
+        const chain = ChainConfigs[network];
+        if (!chain) continue;
         console.log(`Monitoring bridge on ${chain.name}...`);
         
         const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
@@ -35,8 +55,8 @@ export async function handler(credentials) {
 
         // Check bridge balance
         const balance = await provider.getBalance(bridgeAddress);
-        if (balance.lt(THRESHOLDS.MIN_BALANCE_THRESHOLD)) {
-            await relayClient.createAlert({
+        if (balance.lt(ethers.BigNumber.from(minBalanceThreshold))) {
+            await autotaskClient.createAlert({
                 title: `Low Bridge Balance on ${chain.name}`,
                 description: `Bridge balance is below threshold: ${ethers.utils.formatEther(balance)} ETH`,
                 severity: 'HIGH',
@@ -54,7 +74,7 @@ export async function handler(credentials) {
         const pendingTransfers = events.filter(e => !e.args.processed);
 
         if (pendingTransfers.length > THRESHOLDS.MAX_PENDING_TRANSFERS) {
-            await relayClient.createAlert({
+            await autotaskClient.createAlert({
                 title: `High Pending Transfers on ${chain.name}`,
                 description: `Number of pending transfers (${pendingTransfers.length}) exceeds threshold`,
                 severity: 'MEDIUM',
@@ -74,7 +94,7 @@ export async function handler(credentials) {
         });
 
         if (stuckTransfers.length > 0) {
-            await relayClient.createAlert({
+            await autotaskClient.createAlert({
                 title: `Stuck Transfers Detected on ${chain.name}`,
                 description: `${stuckTransfers.length} transfers are stuck for more than ${THRESHOLDS.MAX_TRANSFER_AGE} seconds`,
                 severity: 'HIGH',
