@@ -1,4 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ethers");
+require("@typechain/hardhat");
 require("@nomicfoundation/hardhat-chai-matchers");
 require("@nomicfoundation/hardhat-ethers");
 require("solidity-coverage");
