@@ -56,7 +56,7 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
             type: 'BLOCK',
             name: 'Market Data Monitor',
             network: 'ethereum', // Monitor on Ethereum mainnet
-            addresses: contracts.map(c => c.reporter.target),
+            addresses: contracts.map(c => c.reporter.target.toString()),
             abi: JSON.stringify(ReporterABI.abi),
             notificationChannels: ['email'],
             paused: false,
@@ -65,7 +65,7 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                 expression: null
             }],
             txCondition: '',
-            functionCondition: '',
+            functionConditions: [],
             riskCategory: 'TECHNICAL'
         };
         await defender.monitor.create(monitorRequest);
@@ -80,7 +80,7 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
             const events = await bridge.queryFilter(filter, -1000); // Last 1000 blocks
 
             for (const event of events) {
-                const args = event.args as { token: string; amount: bigint } | undefined;
+                const args = (event as any).args as { token: string; amount: bigint } | undefined;
                 if (!args?.token || !args?.amount) continue;
                 const { token, amount } = args;
                 
