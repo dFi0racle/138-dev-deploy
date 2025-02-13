@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./security/Pausable.sol";
+import "./security/Ownable.sol";
 
 contract Tether is Pausable, Ownable {
     string public name = "Tether";
