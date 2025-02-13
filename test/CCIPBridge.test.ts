@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { parseEther, ZeroAddress, Contract, ContractFactory } from "ethers";
+import { parseEther } from "ethers";
+import { Contract } from "ethers";
+import { AddressZero } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
 interface TestContext {
