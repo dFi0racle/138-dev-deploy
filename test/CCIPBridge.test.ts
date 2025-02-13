@@ -5,16 +5,26 @@ import { Contract } from "@ethersproject/contracts";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-import { ContractFactory as EthersContractFactory } from "ethers";
-
-interface ContractFactory extends EthersContractFactory {
-    deploy(...args: any[]): Promise<Contract>;
-}
-
-interface DeployedContract extends Contract {
+interface ITestContract extends Contract {
     address: string;
     grantRole(role: string, account: string): Promise<any>;
     REPORTER_ROLE(): Promise<string>;
+    supportedChains(selector: bigint): Promise<boolean>;
+    filters: {
+        MarketDataUpdated(): any;
+        TokensSent(): any;
+    };
+    queryFilter(filter: any): Promise<any[]>;
+}
+
+type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
+
+interface TestContext {
+    ccipBridge: ITestContract;
+    reporter: ITestContract;
+    owner: any;
+    user: any;
+    router: ITestContract;
 }
 
 interface TestContext {
