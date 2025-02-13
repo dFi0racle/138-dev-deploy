@@ -5,7 +5,15 @@ import { Contract } from "@ethersproject/contracts";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
+interface ContractFactory {
+    deploy(...args: any[]): Promise<Contract>;
+}
+
+interface DeployedContract extends Contract {
+    address: string;
+    grantRole(role: string, account: string): Promise<any>;
+    REPORTER_ROLE(): Promise<string>;
+}
 
 interface TestContext {
     ccipBridge: Contract;
