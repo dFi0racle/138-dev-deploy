@@ -6,6 +6,7 @@ import "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import "../security/AccessControl.sol";
 import "../interfaces/ICCIPRouter.sol";
 import "../interfaces/ICCIPReceiver.sol";
+import "../interfaces/IBridge.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -14,7 +15,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @notice Bridge contract for cross-chain token transfers and message passing using Chainlink CCIP
  * @dev Supports high-volume transfers across top 10 EVM chains with comprehensive reporting
  */
-contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
+contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
     using Client for Client.EVM2AnyMessage;
 
     // State variables
@@ -115,12 +116,12 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
      * @param token The token contract address
      * @param amount The amount of tokens to transfer
      */
-    function sendTokens(
-        uint64 destinationChainSelector,
-        address receiver,
+    function bridgeToken(
         address token,
-        uint256 amount
-    ) external payable nonReentrant returns (bytes32) {
+        uint256 amount,
+        uint256 targetChainId
+    ) external payable override nonReentrant returns (bytes32) {
+        uint64 destinationChainSelector = uint64(targetChainId);
         if (!supportedChains[destinationChainSelector]) revert UnsupportedChain(destinationChainSelector);
         
         // High volume transfer checks
@@ -269,4 +270,23 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
     function setMessageGasLimit(uint256 newGasLimit) external onlyRole(FEE_MANAGER_ROLE) {
         messageGasLimit = newGasLimit;
     }
+    /**
+     * @notice Verifies a transaction
+     * @param txHash The transaction hash to verify
+     * @return bool True if the transaction is verified
+     */
+    function verifyTransaction(bytes32 txHash) external view override returns (bool) {
+        return processedMessages[txHash] || processedTransfers[txHash];
+    }
+
+    /**
+     * @notice Claims tokens that have been bridged
+     * @param txHash The transaction hash of the bridge transfer
+     */
+    function claimToken(bytes32 txHash) external override {
+        require(processedTransfers[txHash], "Transfer not processed");
+        // Implementation will be added based on specific token claiming requirements
+        revert("Not implemented");
+    }
+
 }
