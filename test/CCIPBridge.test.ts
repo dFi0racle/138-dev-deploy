@@ -25,6 +25,20 @@ interface TestContext {
     router: ITestContract;
 }
 
+import { BaseContract, ContractTransactionResponse } from "ethers";
+
+interface ITestContract extends BaseContract {
+    address: string;
+    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
+    REPORTER_ROLE(): Promise<string>;
+    supportedChains(selector: bigint): Promise<boolean>;
+    filters: {
+        MarketDataUpdated(): any;
+        TokensSent(): any;
+    };
+    queryFilter(filter: any): Promise<any[]>;
+}
+
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
 type DeployedContract = ITestContract;
 
