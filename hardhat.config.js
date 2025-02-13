@@ -27,6 +27,15 @@ module.exports = {
     artifacts: "./artifacts",
     node_modules: nodeModulesPath
   },
+  coverage: {
+    statements: 90,
+    branches: 85,
+    functions: 90,
+    lines: 90,
+    excludeContracts: [],
+    reporter: ['html', 'lcov', 'text'],
+    revertStrings: ['mstore', 'require', 'message']
+  },
   networks: {
     hardhat: {
       chainId: 1337,
