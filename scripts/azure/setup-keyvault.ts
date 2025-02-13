@@ -31,7 +31,7 @@ async function setupKeyVault() {
             family: 'A',
             name: 'standard',
           },
-          tenantId: process.env.AZURE_TENANT_ID,
+          tenantId: process.env.AZURE_TENANT_ID || '',
           accessPolicies: [],
           enabledForDeployment: true,
           enabledForDiskEncryption: true,

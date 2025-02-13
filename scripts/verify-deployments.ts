@@ -1,6 +1,6 @@
-import { ethers } from "hardhat";
+import { ethers, run } from "hardhat";
 import { ChainConfigs } from "../config/chains";
-import { DefenderRelayProvider } from "@openzeppelin/defender-sdk";
+import { RelayProvider } from "@openzeppelin/defender-sdk-relay-client";
 
 async function main() {
     console.log("Verifying contract deployments across networks...");
@@ -14,7 +14,7 @@ async function main() {
     for (const chain of Object.values(ChainConfigs)) {
         console.log(`\nVerifying ${chain.name}...`);
         
-        const provider = new DefenderRelayProvider(credentials);
+        const provider = new RelayProvider(credentials);
         
         try {
             // Get contract addresses from environment
