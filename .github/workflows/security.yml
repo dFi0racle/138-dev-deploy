@@ -1,5 +1,10 @@
 name: Security Scanning
 
+permissions:
+  contents: write
+  security-events: write
+  actions: write
+
 on:
   push:
     branches: [ main, 'devin/*' ]

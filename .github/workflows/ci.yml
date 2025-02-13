@@ -1,5 +1,10 @@
 name: CI/CD
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
 on:
   push:
     branches: [ main, 'devin/*' ]
