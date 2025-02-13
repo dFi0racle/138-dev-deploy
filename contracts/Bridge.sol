@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./interfaces/IBridge.sol";
 import "./interfaces/IOracle.sol";
 
-contract Bridge is IBridge, Pausable, AccessControl, ReentrancyGuard {
+contract Bridge is IBridge, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant VALIDATOR_ROLE = keccak256("VALIDATOR_ROLE");
     
@@ -23,12 +23,16 @@ contract Bridge is IBridge, Pausable, AccessControl, ReentrancyGuard {
     event TransferLimitUpdated(uint256 newLimit);
     event TokenStatusUpdated(address token, bool supported);
     
-    constructor(address _oracle, uint256 _required) {
+    function initialize(address _oracle, uint256 _required) public initializer {
         require(_oracle != address(0), "Invalid oracle address");
         require(_required > 0, "Required validators must be > 0");
         
         oracle = IOracle(_oracle);
         required = _required;
+        
+        __Pausable_init();
+        __AccessControl_init();
+        __ReentrancyGuard_init();
         
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(OPERATOR_ROLE, msg.sender);
