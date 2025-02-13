@@ -1,31 +1,38 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { parseEther, ZeroAddress, Contract, ContractFactory } from "ethers";
 import { ChainConfigs } from "../config/chains";
 
+interface TestContext {
+    ccipBridge: Contract;
+    reporter: Contract;
+    owner: any;
+    user: any;
+    router: Contract;
+}
+
 describe("CCIPBridge", function () {
-    let ccipBridge;
-    let reporter;
-    let owner;
-    let user;
-    let router;
+    let context: TestContext;
 
     beforeEach(async function () {
-        [owner, user] = await ethers.getSigners();
+        const [owner, user] = await ethers.getSigners();
 
         // Deploy mock router
-        const MockRouter = await ethers.getContractFactory("MockCCIPRouter");
-        router = await MockRouter.deploy();
+        const MockRouter = await ethers.getContractFactory("MockCCIPRouter") as ContractFactory;
+        const router = await MockRouter.deploy();
 
         // Deploy Reporter
-        const Reporter = await ethers.getContractFactory("Reporter");
-        reporter = await Reporter.deploy();
+        const Reporter = await ethers.getContractFactory("Reporter") as ContractFactory;
+        const reporter = await Reporter.deploy();
 
         // Deploy CCIPBridge
-        const CCIPBridge = await ethers.getContractFactory("CCIPBridge");
+        const CCIPBridge = await ethers.getContractFactory("CCIPBridge") as ContractFactory;
         const supportedChains = Object.values(ChainConfigs)
             .map(c => BigInt(c.selector));
         
-        ccipBridge = await CCIPBridge.deploy(router.address, supportedChains);
+        const ccipBridge = await CCIPBridge.deploy(router.address, supportedChains);
+
+        context = { ccipBridge, reporter, owner, user, router };
 
         // Set up roles
         await reporter.grantRole(await reporter.REPORTER_ROLE(), ccipBridge.address);
@@ -34,18 +41,18 @@ describe("CCIPBridge", function () {
     describe("High Volume Support", function () {
         it("should handle large batches of transfers", async function () {
             const batchSize = 100;
-            const amount = ethers.utils.parseEther("1.0");
+            const amount = parseEther("1.0");
             
             // Create mock token
             const Token = await ethers.getContractFactory("MockToken");
             const token = await Token.deploy();
             
             // Approve and transfer
-            await token.approve(ccipBridge.address, amount.mul(batchSize));
+            await token.approve(context.ccipBridge.address, amount);
             
             // Send multiple transfers
             for (let i = 0; i < batchSize; i++) {
-                await ccipBridge.bridgeToken(
+                await context.ccipBridge.bridgeToken(
                     token.address,
                     amount,
                     ChainConfigs.POLYGON.id
@@ -53,7 +60,7 @@ describe("CCIPBridge", function () {
             }
             
             // Verify transfers processed
-            const events = await ccipBridge.queryFilter(ccipBridge.filters.TokensSent());
+            const events = await context.ccipBridge.queryFilter(context.ccipBridge.filters.TokensSent());
             expect(events.length).to.equal(batchSize);
         });
     });
@@ -70,18 +77,18 @@ describe("CCIPBridge", function () {
     describe("Market Data Reporting", function () {
         it("should report market data across chains", async function () {
             const marketData = {
-                token: ethers.constants.AddressZero,
-                price: ethers.utils.parseEther("1000"),
-                volume24h: ethers.utils.parseEther("1000000"),
-                tvl: ethers.utils.parseEther("10000000"),
+                token: ZeroAddress,
+                price: parseEther("1000"),
+                volume24h: parseEther("1000000"),
+                tvl: parseEther("10000000"),
                 timestamp: Math.floor(Date.now() / 1000),
                 source: "TestSource"
             };
 
-            await ccipBridge.sendMessage(
+            await context.ccipBridge.sendMessage(
                 ChainConfigs.POLYGON.selector,
-                reporter.address,
-                ethers.utils.defaultAbiCoder.encode(
+                context.reporter.address,
+                ethers.AbiCoder.defaultAbiCoder().encode(
                     ["tuple(address,uint256,uint256,uint256,uint256,string)"],
                     [Object.values(marketData)]
                 )
@@ -99,9 +106,9 @@ describe("CCIPBridge", function () {
                 ["TestMessage", 123, "0x1234"]
             );
 
-            await ccipBridge.sendMessage(
+            await context.ccipBridge.sendMessage(
                 ChainConfigs.POLYGON.selector,
-                reporter.address,
+                context.reporter.address,
                 message
             );
 

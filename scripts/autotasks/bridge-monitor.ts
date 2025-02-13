@@ -3,10 +3,12 @@ import { MonitorClient } from '@openzeppelin/defender-sdk-monitor-client';
 import { RelayClient } from '@openzeppelin/defender-sdk-relay-client';
 import { ExternalCreateBlockMonitorRequest } from '@openzeppelin/defender-sdk-monitor-client/lib/models/monitor';
 import { Result } from '@ethersproject/abi';
-import { ethers } from 'ethers';
-import { ChainConfigs } from '../../config/chains';
+import { ethers, JsonRpcProvider, Contract, parseUnits } from 'ethers';
+import { ChainConfigs, ChainConfig } from '../../config/chains';
 import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
 import CCIPBridgeABI from '../../artifacts/contracts/bridges/CCIPBridge.sol/CCIPBridge.json';
+
+type SupportedNetwork = keyof typeof ChainConfigs;
 
 // Use monitoring configuration from defender config
 const {
@@ -29,14 +31,14 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
 
         // Initialize providers for each supported network
         const providers = supportedNetworks.map(network => {
-            const config = ChainConfigs[network];
+            const config = ChainConfigs[network as SupportedNetwork];
             if (!config) throw new Error(`Network ${network} not configured`);
-            return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
+            return new JsonRpcProvider(config.rpcUrls[0]);
         });
 
         // Monitor bridge contracts on each supported network
         for (const network of supportedNetworks) {
-            const chain = ChainConfigs[network];
+            const chain = ChainConfigs[network as SupportedNetwork];
             if (!chain) continue;
             console.log(`Monitoring bridge on ${chain.name}...`);
             
@@ -46,12 +48,12 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                 continue;
             }
 
-            const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrls[0]);
-            const bridge = new ethers.Contract(bridgeAddress, CCIPBridgeABI.abi, provider);
+            const provider = new JsonRpcProvider(chain.rpcUrls[0]);
+            const bridge = new Contract(bridgeAddress, CCIPBridgeABI.abi, provider);
 
             // Check bridge balance
             const balance = await provider.getBalance(bridgeAddress);
-            if (balance.lt(ethers.BigNumber.from(minBalanceThreshold))) {
+            if (balance < parseUnits(minBalanceThreshold.toString(), "ether")) {
                 const monitorRequest: ExternalCreateBlockMonitorRequest = {
                     type: 'BLOCK',
                     name: `Bridge Monitor - ${chain.name}`,
@@ -64,10 +66,12 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         amount: alertThreshold,
                         windowSeconds: healthCheckInterval
                     },
-                    conditions: [{
+                    eventConditions: [{
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: `balance < ${minBalanceThreshold}`
                     }],
+                    txConditions: [],
+                    functionConditions: [],
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -77,7 +81,10 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
             // Monitor pending transfers
             const filter = bridge.filters.TokensSent();
             const events = await bridge.queryFilter(filter, -1000);
-            const pendingTransfers = events.filter(e => e.args && !e.args.processed);
+            const pendingTransfers = events.filter(e => {
+                const args = (e as any).args;
+                return args && !args.processed;
+            });
 
             if (pendingTransfers.length > maxPendingTransfers) {
                 const monitorRequest: ExternalCreateBlockMonitorRequest = {
@@ -88,10 +95,12 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                     abi: JSON.stringify(CCIPBridgeABI.abi),
                     notificationChannels: ['email'],
                     paused: false,
-                    conditions: [{
+                    eventConditions: [{
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: null
                     }],
+                    txConditions: [],
+                    functionConditions: [],
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -101,7 +110,8 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
             // Check for stuck transfers
             const currentTime = Math.floor(Date.now() / 1000);
             const stuckTransfers = pendingTransfers.filter(e => {
-                const transferAge = e.args ? currentTime - e.args.timestamp.toNumber() : 0;
+                const args = (e as any).args;
+                const transferAge = args ? currentTime - args.timestamp.toNumber() : 0;
                 return transferAge > maxTransferAge;
             });
 
