@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { parseEther, Contract, ContractTransactionResponse, BaseContract } from "ethers";
+import { parseEther, Contract, ContractTransactionResponse, BaseContract, EventFilter, Signer, Event } from "ethers";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
-
-type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: TArgs) => Promise<TResult>;
 
 interface ITestContract extends Contract {
     // Contract methods
