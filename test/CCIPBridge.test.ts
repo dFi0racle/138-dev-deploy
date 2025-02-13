@@ -1,33 +1,8 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { parseEther } from "ethers";
-import { Contract } from "@ethersproject/contracts";
+import { parseEther, Contract, ContractTransactionResponse } from "ethers";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
-
-interface ITestContract extends Contract {
-    address: string;
-    grantRole(role: string, account: string): Promise<any>;
-    REPORTER_ROLE(): Promise<string>;
-    supportedChains(selector: bigint): Promise<boolean>;
-    filters: {
-        MarketDataUpdated(): any;
-        TokensSent(): any;
-    };
-    queryFilter(filter: any): Promise<any[]>;
-}
-
-interface TestContext {
-    ccipBridge: ITestContract;
-    reporter: ITestContract;
-    owner: any;
-    user: any;
-    router: ITestContract;
-}
-
-import { BaseContract, ContractTransactionResponse } from "ethers";
-
-import { Contract } from "ethers";
 
 interface ITestContract extends Contract {
     address: string;
@@ -39,18 +14,16 @@ interface ITestContract extends Contract {
         TokensSent(): any;
     };
     queryFilter(filter: any): Promise<any[]>;
-    deploymentTransaction(): ContractTransactionResponse;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
-type DeployedContract = ITestContract;
 
 interface TestContext {
-    ccipBridge: DeployedContract;
-    reporter: DeployedContract;
+    ccipBridge: ITestContract;
+    reporter: ITestContract;
     owner: any;
     user: any;
-    router: DeployedContract;
+    router: ITestContract;
 }
 
 describe("CCIPBridge", function () {
