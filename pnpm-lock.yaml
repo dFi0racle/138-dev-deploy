@@ -24,11 +24,8 @@ dependencies:
     specifier: ^2.0.12
     version: 2.0.12(hardhat@2.22.18)
   '@openzeppelin/contracts':
-    specifier: ^5.2.0
-    version: 5.2.0
-  '@openzeppelin/contracts-upgradeable':
     specifier: 5.2.0
-    version: 5.2.0(@openzeppelin/contracts@5.2.0)
+    version: 5.2.0
   '@typechain/ethers-v6':
     specifier: ^0.5.0
     version: 0.5.1(ethers@6.13.5)(typechain@8.3.2)(typescript@5.7.3)
@@ -90,10 +87,10 @@ devDependencies:
     version: 8.0.0
   prettier:
     specifier: ^3.4.2
-    version: 3.5.0
+    version: 3.5.1
   prettier-plugin-solidity:
     specifier: ^1.4.2
-    version: 1.4.2(prettier@3.5.0)
+    version: 1.4.2(prettier@3.5.1)
   solhint:
     specifier: ^5.0.5
     version: 5.0.5(typescript@5.7.3)
@@ -878,14 +875,6 @@ packages:
       '@nomicfoundation/solidity-analyzer-linux-x64-gnu': 0.1.2
       '@nomicfoundation/solidity-analyzer-linux-x64-musl': 0.1.2
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.1.2
-
-  /@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0):
-    resolution: {integrity: sha512-mZIu9oa4tQTlGiOJHk6D3LdJlqFqF6oNOSn6S6UVJtzfs9UsY9/dhMEbAVTwElxUtJnjpf6yA062+oBp+eOyPg==}
-    peerDependencies:
-      '@openzeppelin/contracts': 5.2.0
-    dependencies:
-      '@openzeppelin/contracts': 5.2.0
-    dev: false
 
   /@openzeppelin/contracts@4.9.6:
     resolution: {integrity: sha512-xSmezSupL+y9VkHZJGDoCBpmnB2ogM13ccaYDWqJTfS3dbuHkgjuwDFUmaFauBCboQMGB/S5UqUl2y54X99BmA==}
@@ -3714,14 +3703,14 @@ packages:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
     engines: {node: '>= 0.8.0'}
 
-  /prettier-plugin-solidity@1.4.2(prettier@3.5.0):
+  /prettier-plugin-solidity@1.4.2(prettier@3.5.1):
     resolution: {integrity: sha512-VVD/4XlDjSzyPWWCPW8JEleFa8JNKFYac5kNlMjVXemQyQZKfpekPMhFZSePuXB6L+RixlFvWe20iacGjFYrLw==}
     engines: {node: '>=18'}
     peerDependencies:
       prettier: '>=2.3.0'
     dependencies:
       '@solidity-parser/parser': 0.19.0
-      prettier: 3.5.0
+      prettier: 3.5.1
       semver: 7.7.1
     dev: true
 
@@ -3730,8 +3719,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  /prettier@3.5.0:
-    resolution: {integrity: sha512-quyMrVt6svPS7CjQ9gKb3GLEX/rl3BCL2oa/QkNcXv4YNVBC9olt3s+H7ukto06q7B1Qz46PbrKLO34PR6vXcA==}
+  /prettier@3.5.1:
+    resolution: {integrity: sha512-hPpFQvHwL3Qv5AdRvBFMhnKo4tYxp0ReXiPn2bxkiohEX6mBeBwEpBSQTkD458RaaDKQMYSp4hX4UtfUTA5wDw==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true

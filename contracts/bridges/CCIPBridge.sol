@@ -123,17 +123,40 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
     ) external payable nonReentrant returns (bytes32) {
         if (!supportedChains[destinationChainSelector]) revert UnsupportedChain(destinationChainSelector);
         
+        // High volume transfer checks
+        uint256 nonce = nonces[msg.sender]++;
+        bytes32 transferId = keccak256(abi.encodePacked(
+            msg.sender,
+            receiver,
+            token,
+            amount,
+            nonce,
+            block.timestamp
+        ));
+        
+        if (processedTransfers[transferId]) revert TransferAlreadyProcessed();
+        
+        // Transfer tokens to bridge
         IERC20(token).transferFrom(msg.sender, address(this), amount);
         
+        // Prepare CCIP message
         Client.EVMTokenAmount[] memory tokenAmounts = new Client.EVMTokenAmount[](1);
         tokenAmounts[0] = Client.EVMTokenAmount({
             token: token,
             amount: amount
         });
         
+        // Add metadata for tracking
+        bytes memory metadata = abi.encode(
+            transferId,
+            nonce,
+            block.timestamp,
+            msg.sender
+        );
+        
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver),
-            data: "",
+            data: metadata,
             tokenAmounts: tokenAmounts,
             extraArgs: Client._argsToBytes(
                 Client.EVMExtraArgsV1({gasLimit: messageGasLimit})
@@ -151,9 +174,23 @@ contract CCIPBridge is CCIPReceiver, AccessControl, ReentrancyGuard {
             amount
         );
         
+        // Mark transfer as processed
+        processedTransfers[transferId] = true;
+        
         emit TokensSent(messageId, destinationChainSelector, token, amount);
+        emit TransferProcessed(transferId, messageId, msg.sender, receiver, token, amount);
+        
         return messageId;
     }
+    
+    event TransferProcessed(
+        bytes32 indexed transferId,
+        bytes32 indexed messageId,
+        address indexed sender,
+        address receiver,
+        address token,
+        uint256 amount
+    );
     
     /**
      * @notice Handles incoming CCIP messages
