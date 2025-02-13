@@ -4,31 +4,23 @@ import { parseEther, Contract, ContractTransactionResponse } from "ethers";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
-interface ITestContract {
-    address: string;
-    connect(signer: any): ITestContract;
-    attach(address: string): ITestContract;
-    deployed(): Promise<ITestContract>;
-    
+interface ITestContract extends Contract {
     // Contract methods
-    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
-    REPORTER_ROLE(): Promise<string>;
-    supportedChains(selector: bigint): Promise<boolean>;
-    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
-    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
+    grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
+    REPORTER_ROLE: () => Promise<string>;
+    supportedChains: (selector: bigint) => Promise<boolean>;
+    bridgeToken: (token: string, amount: bigint, chainId: number) => Promise<ContractTransactionResponse>;
+    sendMessage: (selector: bigint, target: string, message: string) => Promise<ContractTransactionResponse>;
     
     // Event filters
     filters: {
-        MarketDataUpdated(): any;
-        TokensSent(): any;
-        MessageSent(): any;
+        MarketDataUpdated: () => any;
+        TokensSent: () => any;
+        MessageSent: () => any;
     };
     
     // Query events
-    queryFilter(filter: any): Promise<any[]>;
-    
-    // Contract state
-    deploymentTransaction(): ContractTransactionResponse;
+    queryFilter: (filter: any) => Promise<any[]>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
