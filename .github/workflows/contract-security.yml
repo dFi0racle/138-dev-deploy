@@ -9,6 +9,9 @@ on:
 jobs:
   security:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [ethereum, polygon, arbitrum, optimism, avalanche, bsc, base, gnosis, fantom, metis]
     steps:
       - uses: actions/checkout@v3
       
@@ -25,11 +28,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.12.1'
+          node-version: '20.18.3'
           
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.15.4
+          version: 10.3.0
           
       - name: Install dependencies
         run: pnpm install
