@@ -17,8 +17,6 @@ interface ITestContract extends Contract {
     queryFilter(filter: any): Promise<any[]>;
 }
 
-type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
-
 interface TestContext {
     ccipBridge: ITestContract;
     reporter: ITestContract;
@@ -26,6 +24,9 @@ interface TestContext {
     user: any;
     router: ITestContract;
 }
+
+type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
+type DeployedContract = ITestContract;
 
 interface TestContext {
     ccipBridge: Contract;
