@@ -1,16 +1,18 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { parseEther, Contract, ContractTransactionResponse } from "ethers";
+import { parseEther, Contract, ContractTransactionResponse, BaseContract } from "ethers";
 import { AddressZero as ZeroAddress } from "@ethersproject/constants";
 import { ChainConfigs } from "../config/chains";
 
+type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: TArgs) => Promise<TResult>;
+
 interface ITestContract extends Contract {
     // Contract methods
-    grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
-    REPORTER_ROLE: () => Promise<string>;
-    supportedChains: (selector: bigint) => Promise<boolean>;
-    bridgeToken: (token: string, amount: bigint, chainId: number) => Promise<ContractTransactionResponse>;
-    sendMessage: (selector: bigint, target: string, message: string) => Promise<ContractTransactionResponse>;
+    grantRole: BaseContractMethod<[string, string], ContractTransactionResponse>;
+    REPORTER_ROLE: BaseContractMethod<[], string>;
+    supportedChains: BaseContractMethod<[bigint], boolean>;
+    bridgeToken: BaseContractMethod<[string, bigint, number], ContractTransactionResponse>;
+    sendMessage: BaseContractMethod<[bigint, string, string], ContractTransactionResponse>;
     
     // Event filters
     filters: {
