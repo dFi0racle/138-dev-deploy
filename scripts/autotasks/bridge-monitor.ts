@@ -70,8 +70,8 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: `balance < ${minBalanceThreshold}`
                     }],
-                    txConditions: [],
-                    functionConditions: [],
+                    txCondition: null,
+                    functionCondition: null,
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -99,8 +99,8 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
                         expression: null
                     }],
-                    txConditions: [],
-                    functionConditions: [],
+                    txCondition: null,
+                    functionCondition: null,
                     riskCategory: 'FINANCIAL'
                 };
                 await defender.monitor.create(monitorRequest);
@@ -124,9 +124,9 @@ export async function handler(credentials: { apiKey: string; apiSecret: string }
                     abi: JSON.stringify(CCIPBridgeABI.abi),
                     notificationChannels: ['email'],
                     paused: false,
-                    conditions: [{
+                    eventConditions: [{
                         eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
-                        expression: `block.timestamp - timestamp > ${maxTransferAge}`
+                        expression:`block.timestamp - timestamp > ${maxTransferAge}`
                     }],
                     riskCategory: 'FINANCIAL'
                 };
