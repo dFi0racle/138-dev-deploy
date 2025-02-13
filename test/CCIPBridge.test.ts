@@ -17,24 +17,21 @@ interface ITestContract extends Contract {
     };
     
     // Event filters
-    filters: Record<string, (...args: any[]) => any>;
+    filters: {
+        MarketDataUpdated(token?: string, price?: bigint, volume24h?: bigint, tvl?: bigint, timestamp?: number, source?: string): EventFilter;
+        TokensSent(token?: string, amount?: bigint, chainId?: number): EventFilter;
+        MessageSent(selector?: bigint, target?: string, message?: string): EventFilter;
+    };
     
     // Query events
-    queryFilter(filter: any): Promise<any[]>;
+    queryFilter(filter: EventFilter): Promise<Event[]>;
     
     // Contract properties
     address: string;
-    connect(signer: any): ITestContract;
+    connect(signer: Signer): ITestContract;
     attach(address: string): ITestContract;
     deployed(): Promise<ITestContract>;
     deploymentTransaction(): ContractTransactionResponse;
-    
-    // Direct method access
-    grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
-    REPORTER_ROLE: () => Promise<string>;
-    supportedChains: (selector: bigint) => Promise<boolean>;
-    bridgeToken: (token: string, amount: bigint, chainId: number) => Promise<ContractTransactionResponse>;
-    sendMessage: (selector: bigint, target: string, message: string) => Promise<ContractTransactionResponse>;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
