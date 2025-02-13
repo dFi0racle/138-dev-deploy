@@ -33,4 +33,38 @@ abstract contract AccessControl {
             emit RoleGranted(role, account, msg.sender);
         }
     }
+
+    function grantRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
+        _grantRole(role, account);
+    }
+
+    function revokeRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
+        if (hasRole(role, account)) {
+            _roles[role].members[account] = false;
+            emit RoleRevoked(role, account, msg.sender);
+        }
+    }
+
+    function getRoleAdmin(bytes32 role) public view virtual returns (bytes32) {
+        return _roles[role].adminRole;
+    }
+
+    function getRoleMember(bytes32 role, uint256 index) public view virtual returns (address) {
+        bytes32 roleHash = role;
+        address[] memory members = new address[](1);
+        uint256 count = 0;
+        
+        // Simple implementation that returns the first member
+        for (uint160 i = 1; i < type(uint160).max && count < 1; i++) {
+            address account = address(i);
+            if (hasRole(roleHash, account)) {
+                if (count == index) {
+                    return account;
+                }
+                count++;
+            }
+        }
+        
+        revert("AccessControl: member not found");
+    }
 }
