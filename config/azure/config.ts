@@ -1,8 +1,9 @@
 import { DefaultAzureCredential } from '@azure/identity';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { ContainerServiceClient } from '@azure/arm-containerservice';
+import { AzureConfig } from './types';
 
-export const AZURE_CONFIG = {
+export const AZURE_CONFIG: AzureConfig = {
   // Default regions for deployment
   regions: [
     'eastus',
