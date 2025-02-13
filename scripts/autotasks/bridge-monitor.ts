@@ -1,12 +1,8 @@
-import { 
-    DefenderRelayProvider,
-    DefenderRelaySigner,
-    RelayerParams
-} from '@openzeppelin/defender-sdk/lib/relay';
-import { 
-    AutotaskClient,
-    RelayClient 
-} from '@openzeppelin/defender-sdk/lib/client';
+import { ActionClient } from '@openzeppelin/defender-sdk-action-client';
+import { MonitorClient } from '@openzeppelin/defender-sdk-monitor-client';
+import { RelayClient } from '@openzeppelin/defender-sdk-relay-client';
+import { ExternalCreateBlockMonitorRequest, AddressRule, ConditionSet } from '@openzeppelin/defender-sdk-monitor-client/lib/models/monitor';
+import { Result } from '@ethersproject/abi';
 import { ethers } from 'ethers';
 import { ChainConfigs } from '../../config/chains';
 import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
@@ -26,10 +22,14 @@ const {
     supportedNetworks
 } = MONITOR_CONFIG;
 
-export async function handler(credentials) {
-    // Initialize Defender clients
-    const provider = new DefenderRelayProvider(credentials);
-    const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
+export async function handler(credentials: { apiKey: string; apiSecret: string }) {
+    try {
+        // Initialize Defender clients
+        const defender = {
+        monitor: new MonitorClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+        relay: new RelayClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+        action: new ActionClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret })
+    };
 
     // Initialize providers for each supported network
     const providers = supportedNetworks.map(network => {
@@ -56,11 +56,34 @@ export async function handler(credentials) {
         // Check bridge balance
         const balance = await provider.getBalance(bridgeAddress);
         if (balance.lt(ethers.BigNumber.from(minBalanceThreshold))) {
-            await autotaskClient.createAlert({
-                title: `Low Bridge Balance on ${chain.name}`,
-                description: `Bridge balance is below threshold: ${ethers.utils.formatEther(balance)} ETH`,
-                severity: 'HIGH',
-                metadata: {
+            const monitorRequest: ExternalCreateBlockMonitorRequest = {
+                type: 'BLOCK',
+                name: `Bridge Monitor - ${chain.name}`,
+                network: chain.name,
+                addresses: [bridgeAddress],
+                abi: JSON.stringify(CCIPBridgeABI.abi),
+                notificationChannels: ['email'],
+                paused: false,
+                alertThreshold: {
+                    amount: alertThreshold,
+                    windowSeconds: healthCheckInterval
+                },
+                addressRules: [{
+                    addresses: [bridgeAddress],
+                    abi: JSON.stringify(CCIPBridgeABI.abi),
+                    conditions: [{
+                        eventConditions: [{
+                            eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
+                            expression: 'amount > 1000000000000000000'
+                        }],
+                        txConditions: [{
+                            status: 'success',
+                            expression: `balance < ${minBalanceThreshold}`
+                        }],
+                        functionConditions: []
+                    }]
+                }],
+                riskCategory: 'FINANCIAL',
                     chain: chain.name,
                     bridgeAddress,
                     balance: balance.toString()
@@ -71,40 +94,70 @@ export async function handler(credentials) {
         // Monitor pending transfers
         const filter = bridge.filters.TokensSent();
         const events = await bridge.queryFilter(filter, -1000);
-        const pendingTransfers = events.filter(e => !e.args.processed);
+        const pendingTransfers = events.filter(e => e.args && !e.args.processed);
 
-        if (pendingTransfers.length > THRESHOLDS.MAX_PENDING_TRANSFERS) {
-            await autotaskClient.createAlert({
-                title: `High Pending Transfers on ${chain.name}`,
-                description: `Number of pending transfers (${pendingTransfers.length}) exceeds threshold`,
-                severity: 'MEDIUM',
-                metadata: {
-                    chain: chain.name,
-                    bridgeAddress,
-                    pendingCount: pendingTransfers.length
-                }
-            });
+        if (pendingTransfers.length > maxPendingTransfers) {
+            const monitorRequest: ExternalCreateBlockMonitorRequest = {
+                type: 'BLOCK',
+                name: `Bridge Monitor - Pending Transfers - ${chain.name}`,
+                network: chain.name,
+                addresses: [bridgeAddress],
+                abi: JSON.stringify(CCIPBridgeABI.abi),
+                notificationChannels: ['email'],
+                paused: false,
+                addressRules: [{
+                    addresses: [bridgeAddress],
+                    abi: JSON.stringify(CCIPBridgeABI.abi),
+                    conditions: [{
+                        eventConditions: [{
+                            eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
+                            expression: null
+                        }],
+                        txConditions: [],
+                        functionConditions: []
+                    }]
+                }],
+                riskCategory: 'FINANCIAL'
+            };
+            await defender.monitor.create(monitorRequest);
+            console.log(`Created pending transfers monitor for ${chain.name} bridge at ${bridgeAddress}`);
         }
 
         // Check for stuck transfers
         const currentTime = Math.floor(Date.now() / 1000);
         const stuckTransfers = pendingTransfers.filter(e => {
-            const transferAge = currentTime - e.args.timestamp.toNumber();
-            return transferAge > THRESHOLDS.MAX_TRANSFER_AGE;
+            const transferAge = e.args ? currentTime - e.args.timestamp.toNumber() : 0;
+            return transferAge > maxTransferAge;
         });
 
         if (stuckTransfers.length > 0) {
-            await autotaskClient.createAlert({
-                title: `Stuck Transfers Detected on ${chain.name}`,
-                description: `${stuckTransfers.length} transfers are stuck for more than ${THRESHOLDS.MAX_TRANSFER_AGE} seconds`,
-                severity: 'HIGH',
-                metadata: {
-                    chain: chain.name,
-                    bridgeAddress,
-                    stuckCount: stuckTransfers.length,
-                    transfers: stuckTransfers.map(e => e.args.transferId)
-                }
-            });
+            const monitorRequest: ExternalCreateBlockMonitorRequest = {
+                type: 'BLOCK',
+                name: `Bridge Monitor - Stuck Transfers - ${chain.name}`,
+                network: chain.name,
+                addresses: [bridgeAddress],
+                abi: JSON.stringify(CCIPBridgeABI.abi),
+                notificationChannels: ['email'],
+                paused: false,
+                addressRules: [{
+                    addresses: [bridgeAddress],
+                    abi: JSON.stringify(CCIPBridgeABI.abi),
+                    conditions: [{
+                        eventConditions: [{
+                            eventSignature: 'TokensSent(bytes32,uint64,address,uint256)',
+                            expression: `block.timestamp - timestamp > ${maxTransferAge}`
+                        }],
+                        txConditions: [],
+                        functionConditions: []
+                    }]
+                }],
+                riskCategory: 'FINANCIAL'
+            };
+            await defender.monitor.create(monitorRequest);
+            console.log(`Created stuck transfers monitor for ${chain.name} bridge at ${bridgeAddress}`);
         }
+    } catch (error) {
+        console.error('Error in bridge monitor:', error);
+        throw error;
     }
 }

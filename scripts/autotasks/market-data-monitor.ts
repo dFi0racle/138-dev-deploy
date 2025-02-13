@@ -1,12 +1,8 @@
-import { 
-    DefenderRelayProvider,
-    DefenderRelaySigner,
-    RelayerParams
-} from '@openzeppelin/defender-sdk/lib/relay';
-import { 
-    AutotaskClient,
-    RelayClient 
-} from '@openzeppelin/defender-sdk/lib/client';
+import { ActionClient } from '@openzeppelin/defender-sdk-action-client';
+import { MonitorClient } from '@openzeppelin/defender-sdk-monitor-client';
+import { RelayClient } from '@openzeppelin/defender-sdk-relay-client';
+import { ExternalCreateBlockMonitorRequest } from '@openzeppelin/defender-sdk-monitor-client/lib/models/monitor';
+import { Result } from '@ethersproject/abi';
 import { ethers } from 'ethers';
 import { ChainConfigs } from '../../config/chains';
 import { defenderConfig, MONITOR_CONFIG } from '../../config/defender';
@@ -21,22 +17,26 @@ const ENDPOINTS = {
 };
 
 // Autotask entry point
-export async function handler(credentials) {
-    // Initialize Defender clients
-    const provider = new DefenderRelayProvider(credentials);
-    const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
-    const autotaskClient = new AutotaskClient(defenderConfig);
-    const relayClient = new RelayClient(defenderConfig);
+export async function handler(credentials: { apiKey: string; apiSecret: string }) {
+    try {
+        // Initialize Defender clients
+        const defender = {
+        monitor: new MonitorClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+        relay: new RelayClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+        action: new ActionClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret })
+    };
+
+    // Initialize providers and contracts first
 
     // Initialize providers for each supported network
-    const providers = supportedNetworks.map(network => {
+    const providers = MONITOR_CONFIG.supportedNetworks.map(network => {
         const config = ChainConfigs[network];
         if (!config) throw new Error(`Network ${network} not configured`);
         return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
     });
 
     // Get contract instances for each supported network
-    const contracts = supportedNetworks.map((network, index) => {
+    const contracts = MONITOR_CONFIG.supportedNetworks.map((network, index) => {
         const chain = ChainConfigs[network];
         if (!chain) throw new Error(`Network ${network} not configured`);
         const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
@@ -63,7 +63,10 @@ export async function handler(credentials) {
         const events = await bridge.queryFilter(filter, -1000); // Last 1000 blocks
 
         for (const event of events) {
-            const { token, amount } = event.args;
+            if (!event.args?.token || !event.args?.amount) continue;
+            const args = event.args as { token: string; amount: bigint } | undefined;
+            if (!args?.token || !args?.amount) continue;
+            const { token, amount } = args;
             
             // Fetch market data from external APIs
             const [cgData, cmcData, gtData] = await Promise.all([
@@ -76,7 +79,7 @@ export async function handler(credentials) {
             const marketData = aggregateMarketData(token, [cgData, cmcData, gtData]);
             
             // Report data through Reporter contract
-            const tx = await reporter.reportMarketData({
+            const reportTx = await reporter.reportMarketData({
                 token: marketData.token,
                 price: marketData.price,
                 volume24h: marketData.volume,
@@ -85,8 +88,38 @@ export async function handler(credentials) {
                 source: 'Defender-Autotask'
             });
 
-            console.log(`Reported market data for ${token} on ${chain.name}: ${tx.hash}`);
+            console.log(`Reported market data for ${token} on ${chain.name}: ${reportTx.hash}`);
         }
+    }
+
+    // Create market data monitor after contracts are initialized
+    const monitorRequest: ExternalCreateBlockMonitorRequest = {
+        type: 'BLOCK',
+        name: 'Market Data Monitor',
+        network: 'ethereum', // Monitor on Ethereum mainnet
+        addresses: contracts.map(c => c.reporter.address),
+        abi: JSON.stringify(ReporterABI.abi),
+        notificationChannels: ['email'],
+        paused: false,
+        addressRules: [{
+            addresses: contracts.map(c => c.reporter.address),
+            abi: JSON.stringify(ReporterABI.abi),
+            conditions: [{
+                eventConditions: [{
+                    eventSignature: 'MarketDataUpdated(address,uint256,uint256,uint256,uint256,string)',
+                    expression: null
+                }],
+                txConditions: [],
+                functionConditions: []
+            }]
+        }],
+        riskCategory: 'TECHNICAL'
+    };
+        await defender.monitor.create(monitorRequest);
+        console.log('Created market data monitor');
+    } catch (error) {
+        console.error('Error in market data monitor:', error);
+        throw error;
     }
 }
 
