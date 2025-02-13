@@ -62,7 +62,19 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY,
+      polygon: process.env.ETHERSCAN_API_KEY,
+      arbitrum: process.env.ETHERSCAN_API_KEY,
+      optimism: process.env.ETHERSCAN_API_KEY,
+      avalanche: process.env.ETHERSCAN_API_KEY,
+      bsc: process.env.ETHERSCAN_API_KEY,
+      base: process.env.ETHERSCAN_API_KEY,
+      gnosis: process.env.ETHERSCAN_API_KEY,
+      fantom: process.env.ETHERSCAN_API_KEY,
+      metis: process.env.ETHERSCAN_API_KEY,
+      tether: process.env.ETHERSCAN_TETHER_API_KEY
+    }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
