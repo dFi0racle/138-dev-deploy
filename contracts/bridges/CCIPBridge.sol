@@ -7,7 +7,7 @@ import "../security/AccessControl.sol";
 import "../interfaces/ICCIPRouter.sol";
 import "../interfaces/ICCIPReceiver.sol";
 import "../interfaces/IBridge.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "../security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
@@ -73,22 +73,36 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
         }
     }
     
+    // State variables
+    mapping(bytes32 => bool) public processedTransfers;
+    mapping(address => address) public receiverAddresses;
+    
+    // Events
+    event TransferProcessed(
+        bytes32 indexed transferId,
+        bytes32 indexed messageId,
+        address indexed sender,
+        address receiver,
+        address token,
+        uint256 amount
+    );
+
     /**
      * @notice Sends a cross-chain message
-     * @param destinationChainSelector The identifier for the destination chain
-     * @param receiver The address of the receiving contract
-     * @param message The message to be sent
+     * @param _destinationChainSelector The identifier for the destination chain
+     * @param _receiver The address of the receiving contract
+     * @param _message The message to be sent
      */
     function sendMessage(
-        uint64 destinationChainSelector,
-        address receiver,
-        bytes calldata message
+        uint64 _destinationChainSelector,
+        address _receiver,
+        bytes calldata _message
     ) external payable nonReentrant returns (bytes32) {
-        if (!supportedChains[destinationChainSelector]) revert UnsupportedChain(destinationChainSelector);
+        if (!supportedChains[_destinationChainSelector]) revert UnsupportedChain(_destinationChainSelector);
         
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
-            receiver: abi.encode(receiver),
-            data: message,
+            receiver: abi.encode(_receiver),
+            data: _message,
             tokenAmounts: new Client.EVMTokenAmount[](0),
             extraArgs: Client._argsToBytes(
                 Client.EVMExtraArgsV1({gasLimit: messageGasLimit})
@@ -96,39 +110,46 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
             feeToken: address(0)
         });
         
-        uint256 fee = router.getFee(destinationChainSelector, message);
+        uint256 fee = router.getFee(_destinationChainSelector, _message);
         if (msg.value < fee) revert InsufficientFee();
         
         bytes32 messageId = router.sendMessage{value: msg.value}(
-            destinationChainSelector,
-            receiver,
-            message
+            _destinationChainSelector,
+            _receiver,
+            _message
         );
         
-        emit MessageSent(messageId, destinationChainSelector, msg.sender);
+        emit MessageSent(messageId, _destinationChainSelector, msg.sender);
         return messageId;
     }
     
     /**
      * @notice Sends tokens to another chain
-     * @param destinationChainSelector The identifier for the destination chain
-     * @param receiver The address receiving the tokens
-     * @param token The token contract address
-     * @param amount The amount of tokens to transfer
+     * @param _destinationChainSelector The identifier for the destination chain
+     * @param _receiver The address receiving the tokens
+     * @param _message The message to send
      */
+    error TransferAlreadyProcessed();
+
     function bridgeToken(
         address token,
         uint256 amount,
-        uint256 targetChainId
+        uint64 _destinationChainSelector,
+        address _receiver
     ) external payable override nonReentrant returns (bytes32) {
-        uint64 destinationChainSelector = uint64(targetChainId);
-        if (!supportedChains[destinationChainSelector]) revert UnsupportedChain(destinationChainSelector);
+        require(_receiver != address(0), "Invalid receiver address");
+        require(token != address(0), "Invalid token address");
+        // Validate chain selector
+        if (!supportedChains[_destinationChainSelector]) revert UnsupportedChain(_destinationChainSelector);
+        
+        // Store receiver address for later use
+        receiverAddresses[msg.sender] = _receiver;
         
         // High volume transfer checks
         uint256 nonce = nonces[msg.sender]++;
         bytes32 transferId = keccak256(abi.encodePacked(
             msg.sender,
-            receiver,
+            _receiver,
             token,
             amount,
             nonce,
@@ -138,7 +159,8 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
         if (processedTransfers[transferId]) revert TransferAlreadyProcessed();
         
         // Transfer tokens to bridge
-        IERC20(token).transferFrom(msg.sender, address(this), amount);
+        bool success = IERC20(token).transferFrom(msg.sender, address(this), amount);
+        if (!success) revert TokenTransferFailed();
         
         // Prepare CCIP message
         Client.EVMTokenAmount[] memory tokenAmounts = new Client.EVMTokenAmount[](1);
@@ -156,7 +178,7 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
         );
         
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
-            receiver: abi.encode(receiver),
+            receiver: abi.encode(_receiver),
             data: metadata,
             tokenAmounts: tokenAmounts,
             extraArgs: Client._argsToBytes(
@@ -169,8 +191,8 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
         if (msg.value < fee) revert InsufficientFee();
         
         bytes32 messageId = router.sendTokens{value: msg.value}(
-            destinationChainSelector,
-            receiver,
+            _destinationChainSelector,
+            _receiver,
             token,
             amount
         );
@@ -179,7 +201,8 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
         processedTransfers[transferId] = true;
         
         emit TokensSent(messageId, destinationChainSelector, token, amount);
-        emit TransferProcessed(transferId, messageId, msg.sender, receiver, token, amount);
+        emit TransferProcessed(transferId, messageId, msg.sender, _receiver, token, amount);
+        emit MessageSent(messageId, destinationChainSelector, msg.sender);
         
         return messageId;
     }
@@ -276,7 +299,7 @@ contract CCIPBridge is IBridge, CCIPReceiver, AccessControl, ReentrancyGuard {
      * @return bool True if the transaction is verified
      */
     function verifyTransaction(bytes32 txHash) external view override returns (bool) {
-        return processedMessages[txHash] || processedTransfers[txHash];
+        return processedMessages[txHash] || processedTransfers[txHash] || false;
     }
 
     /**

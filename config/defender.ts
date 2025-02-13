@@ -1,10 +1,8 @@
-import { 
-    DefenderRelayProvider,
-    DefenderRelaySigner,
-    DefenderConfig
-} from '@openzeppelin/defender-sdk';
+import { ActionClient } from '@openzeppelin/defender-sdk-action-client';
+import { MonitorClient } from '@openzeppelin/defender-sdk-monitor-client';
+import { RelayClient } from '@openzeppelin/defender-sdk-relay-client';
 
-export const defenderConfig: DefenderConfig = {
+export const defenderConfig = {
     apiKey: process.env.DEFENDER_TEAM_API_KEY!,
     apiSecret: process.env.DEFENDER_TEAM_SECRET_KEY!
 };
