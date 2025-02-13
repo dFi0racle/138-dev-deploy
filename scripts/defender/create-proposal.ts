@@ -15,8 +15,8 @@ async function main() {
         console.log(`Creating proposal for ${chain.name}...`);
 
         const proposal = await client.create({
-            title: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
-            description: `Deploys and configures CCIPBridge and Reporter contracts on ${chain.name} (Chain ID: ${chain.id})`,
+            contractId: process.env.DEFENDER_RELAYER_ADDRESS || '',
+            network: chain.name.toLowerCase(),
             type: 'upgrade',
             via: process.env.DEFENDER_RELAYER_ADDRESS || '',
             viaType: 'Relayer',
