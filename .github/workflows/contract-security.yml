@@ -1,5 +1,10 @@
 name: Contract Security
 
+permissions:
+  contents: write
+  security-events: write
+  actions: write
+
 on:
   push:
     branches: [ main, 'devin/*' ]
