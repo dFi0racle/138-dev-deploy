@@ -1,7 +1,7 @@
 {
   "name": "138-chain-deployment",
   "version": "1.0.0",
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm@9.15.1",
   "description": "Development environment for deploying a 138-chain ecosystem",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -42,10 +42,10 @@
     "chai": "^5.1.2",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
-    "glob": "^11.0.1",
+    "glob": "^10.3.10",
     "hardhat-gas-reporter": "^1.0.10",
     "only-allow": "^1.2.1",
-    "solidity-docgen": "^0.6.0",
+    "solidity-docgen": "0.6.0-beta.36",
     "typechain": "^8.3.0",
     "web3": "^4.16.0"
   },
@@ -53,16 +53,15 @@
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
     "hardhat": "^2.22.18",
     "hardhat-contract-sizer": "^2.10.0",
-    "mocha": "^11.1.0",
+    "mocha": "^10.2.0",
     "prettier": "^3.4.2",
     "prettier-plugin-solidity": "^1.4.2",
-    "slither-analyzer": "^0.9.0",
     "solhint": "^5.0.5",
     "solidity-coverage": "^0.8.14"
   },
   "engines": {
     "node": "18.12.1",
-    "pnpm": ">=8.15.4 <9.0.0"
+    "pnpm": ">=8.15.4 <9.15.1"
   },
   "license": "MIT"
 }
