@@ -16,129 +16,117 @@ const ENDPOINTS = {
     GECKOTERMINAL: 'https://api.geckoterminal.com/api/v2'
 };
 
-// Autotask entry point
 export async function handler(credentials: { apiKey: string; apiSecret: string }) {
     try {
         // Initialize Defender clients
         const defender = {
-        monitor: new MonitorClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
-        relay: new RelayClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
-        action: new ActionClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret })
-    };
-
-    // Initialize providers and contracts first
-
-    // Initialize providers for each supported network
-    const providers = MONITOR_CONFIG.supportedNetworks.map(network => {
-        const config = ChainConfigs[network];
-        if (!config) throw new Error(`Network ${network} not configured`);
-        return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
-    });
-
-    // Get contract instances for each supported network
-    const contracts = MONITOR_CONFIG.supportedNetworks.map((network, index) => {
-        const chain = ChainConfigs[network];
-        if (!chain) throw new Error(`Network ${network} not configured`);
-        const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
-        const reporterAddress = process.env[`REPORTER_${chain.name.toUpperCase()}`];
-        
-        if (!bridgeAddress || !reporterAddress) {
-            throw new Error(`Missing contract addresses for ${chain.name}`);
-        }
-
-        return {
-            chain,
-            provider: providers[index],
-            bridge: new ethers.Contract(bridgeAddress, CCIPBridgeABI.abi, providers[index]),
-            reporter: new ethers.Contract(reporterAddress, ReporterABI.abi, providers[index])
+            monitor: new MonitorClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+            relay: new RelayClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret }),
+            action: new ActionClient({ apiKey: credentials.apiKey, apiSecret: credentials.apiSecret })
         };
-    });
 
-    // Monitor events and update market data
-    for (const { chain, provider, bridge, reporter } of contracts) {
-        console.log(`Monitoring ${chain.name}...`);
+        // Initialize providers for each supported network
+        const providers = MONITOR_CONFIG.supportedNetworks.map(network => {
+            const config = ChainConfigs[network];
+            if (!config) throw new Error(`Network ${network} not configured`);
+            return new ethers.providers.JsonRpcProvider(config.rpcUrls[0]);
+        });
 
-        // Listen for bridge events
-        const filter = bridge.filters.TokensSent();
-        const events = await bridge.queryFilter(filter, -1000); // Last 1000 blocks
-
-        for (const event of events) {
-            if (!event.args?.token || !event.args?.amount) continue;
-            const args = event.args as { token: string; amount: bigint } | undefined;
-            if (!args?.token || !args?.amount) continue;
-            const { token, amount } = args;
+        // Get contract instances for each supported network
+        const contracts = MONITOR_CONFIG.supportedNetworks.map((network, index) => {
+            const chain = ChainConfigs[network];
+            if (!chain) throw new Error(`Network ${network} not configured`);
+            const bridgeAddress = process.env[`CCIP_BRIDGE_${chain.name.toUpperCase()}`];
+            const reporterAddress = process.env[`REPORTER_${chain.name.toUpperCase()}`];
             
-            // Fetch market data from external APIs
-            const [cgData, cmcData, gtData] = await Promise.all([
-                fetchCoinGeckoData(token),
-                fetchCMCData(token),
-                fetchGeckoTerminalData(token)
-            ]);
+            if (!bridgeAddress || !reporterAddress) {
+                throw new Error(`Missing contract addresses for ${chain.name}`);
+            }
 
-            // Aggregate and validate data
-            const marketData = aggregateMarketData(token, [cgData, cmcData, gtData]);
-            
-            // Report data through Reporter contract
-            const reportTx = await reporter.reportMarketData({
-                token: marketData.token,
-                price: marketData.price,
-                volume24h: marketData.volume,
-                tvl: marketData.tvl,
-                timestamp: Math.floor(Date.now() / 1000),
-                source: 'Defender-Autotask'
-            });
+            return {
+                chain,
+                provider: providers[index],
+                bridge: new ethers.Contract(bridgeAddress, CCIPBridgeABI.abi, providers[index]),
+                reporter: new ethers.Contract(reporterAddress, ReporterABI.abi, providers[index])
+            };
+        });
 
-            console.log(`Reported market data for ${token} on ${chain.name}: ${reportTx.hash}`);
-        }
-    }
-
-    // Create market data monitor after contracts are initialized
-    const monitorRequest: ExternalCreateBlockMonitorRequest = {
-        type: 'BLOCK',
-        name: 'Market Data Monitor',
-        network: 'ethereum', // Monitor on Ethereum mainnet
-        addresses: contracts.map(c => c.reporter.address),
-        abi: JSON.stringify(ReporterABI.abi),
-        notificationChannels: ['email'],
-        paused: false,
-        addressRules: [{
+        // Create market data monitor
+        const monitorRequest: ExternalCreateBlockMonitorRequest = {
+            type: 'BLOCK',
+            name: 'Market Data Monitor',
+            network: 'ethereum', // Monitor on Ethereum mainnet
             addresses: contracts.map(c => c.reporter.address),
             abi: JSON.stringify(ReporterABI.abi),
+            notificationChannels: ['email'],
+            paused: false,
             conditions: [{
-                eventConditions: [{
-                    eventSignature: 'MarketDataUpdated(address,uint256,uint256,uint256,uint256,string)',
-                    expression: null
-                }],
-                txConditions: [],
-                functionConditions: []
-            }]
-        }],
-        riskCategory: 'TECHNICAL'
-    };
+                eventSignature: 'MarketDataUpdated(address,uint256,uint256,uint256,uint256,string)',
+                expression: null
+            }],
+            riskCategory: 'TECHNICAL'
+        };
         await defender.monitor.create(monitorRequest);
         console.log('Created market data monitor');
+
+        // Monitor events and update market data
+        for (const { chain, provider, bridge, reporter } of contracts) {
+            console.log(`Monitoring ${chain.name}...`);
+
+            // Listen for bridge events
+            const filter = bridge.filters.TokensSent();
+            const events = await bridge.queryFilter(filter, -1000); // Last 1000 blocks
+
+            for (const event of events) {
+                const args = event.args as { token: string; amount: bigint } | undefined;
+                if (!args?.token || !args?.amount) continue;
+                const { token, amount } = args;
+                
+                // Fetch market data from external APIs
+                const [cgData, cmcData, gtData] = await Promise.all([
+                    fetchCoinGeckoData(token),
+                    fetchCMCData(token),
+                    fetchGeckoTerminalData(token)
+                ]);
+
+                // Aggregate and validate data
+                const marketData = aggregateMarketData(token, [cgData, cmcData, gtData]);
+                
+                // Report data through Reporter contract
+                const reportTx = await reporter.reportMarketData({
+                    token: marketData.token,
+                    price: marketData.price,
+                    volume24h: marketData.volume,
+                    tvl: marketData.tvl,
+                    timestamp: Math.floor(Date.now() / 1000),
+                    source: 'Defender-Autotask'
+                });
+
+                console.log(`Reported market data for ${token} on ${chain.name}: ${reportTx.hash}`);
+            }
+        }
     } catch (error) {
         console.error('Error in market data monitor:', error);
         throw error;
     }
 }
 
-async function fetchCoinGeckoData(token) {
+async function fetchCoinGeckoData(token: string) {
     // Implementation for CoinGecko API
     return {};
 }
 
-async function fetchCMCData(token) {
+async function fetchCMCData(token: string) {
     // Implementation for CoinMarketCap API
     return {};
 }
 
-async function fetchGeckoTerminalData(token) {
+async function fetchGeckoTerminalData(token: string) {
     // Implementation for GeckoTerminal API
     return {};
 }
 
-function aggregateMarketData(token, dataSources) {
+function aggregateMarketData(token: string, dataSources: any[]) {
     // Aggregate and validate data from multiple sources
     return {
         token,
