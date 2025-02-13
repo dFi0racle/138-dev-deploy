@@ -43,7 +43,7 @@
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "glob": "^10.3.10",
-    "hardhat-gas-reporter": "^1.0.10",
+    "hardhat-gas-reporter": "^2.0.0",
     "only-allow": "^1.2.1",
     "solidity-docgen": "0.6.0-beta.36",
     "typechain": "^8.3.0",
