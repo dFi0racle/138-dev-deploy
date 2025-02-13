@@ -33,6 +33,13 @@ npx hardhat run scripts/deploy.js
 npx hardhat test
 ```
 
+## Development
+
+Before submitting changes, run the linter:
+```sh
+pnpm run lint
+```
+
 ## Directory Structure
 
 - `contracts/`: Solidity contract files
