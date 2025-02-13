@@ -38,12 +38,16 @@ jobs:
           RPC_URL: ${{ secrets.RPC_URL }}
           DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
           DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
+          DEFENDER_TEAM_API_KEY: ${{ secrets.DEFENDER_TEAM_API_KEY }}
+          DEFENDER_TEAM_SECRET_KEY: ${{ secrets.DEFENDER_TEAM_SECRET_KEY }}
       - run: pnpm run coverage
         env:
           NETWORK: ${{ matrix.network }}
           RPC_URL: ${{ secrets.RPC_URL }}
           DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
           DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
+          DEFENDER_TEAM_API_KEY: ${{ secrets.DEFENDER_TEAM_API_KEY }}
+          DEFENDER_TEAM_SECRET_KEY: ${{ secrets.DEFENDER_TEAM_SECRET_KEY }}
 
   deploy:
     needs: test
@@ -63,5 +67,7 @@ jobs:
           RPC_URL: ${{ secrets.RPC_URL }}
           DEFENDER_API_KEY: ${{ secrets.DEFENDER_API_KEY }}
           DEFENDER_API_SECRET: ${{ secrets.DEFENDER_API_SECRET }}
+          DEFENDER_TEAM_API_KEY: ${{ secrets.DEFENDER_TEAM_API_KEY }}
+          DEFENDER_TEAM_SECRET_KEY: ${{ secrets.DEFENDER_TEAM_SECRET_KEY }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
         run: pnpm hardhat run scripts/deploy-ccip.ts --network ${{ matrix.network }}
