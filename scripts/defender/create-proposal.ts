@@ -14,12 +14,12 @@ async function main() {
     for (const chain of Object.values(ChainConfigs)) {
         console.log(`Creating proposal for ${chain.name}...`);
 
-        const proposal = await client.createProposal({
-            title: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
-            description: `Deploys and configures CCIPBridge and Reporter contracts on ${chain.name} (Chain ID: ${chain.id})`,
+        const proposal = await client.create({
+            name: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
+            contractId: `ccip-bridge-${chain.name.toLowerCase()}`,
+            network: chain.name.toLowerCase(),
             type: 'upgrade',
-            via: process.env.DEFENDER_RELAYER_ADDRESS || '',
-            viaType: 'Relayer',
+            functionInputs: [],
             metadata: {
                 chainId: chain.id.toString(),
                 router: chain.router
