@@ -24,6 +24,7 @@ abstract contract AccessControl {
     }
 
     function _setupRole(bytes32 role, address account) internal virtual {
+        _roles[role].adminRole = DEFAULT_ADMIN_ROLE;
         _grantRole(role, account);
     }
 
