@@ -8,28 +8,24 @@ type BaseContractMethod<TArgs extends any[] = any[], TResult = any> = (...args: 
 
 interface ITestContract extends BaseContract {
     // Contract methods
-    grantRole(role: string, account: string): Promise<ContractTransactionResponse>;
-    REPORTER_ROLE(): Promise<string>;
-    supportedChains(selector: bigint): Promise<boolean>;
-    bridgeToken(token: string, amount: bigint, chainId: number): Promise<ContractTransactionResponse>;
-    sendMessage(selector: bigint, target: string, message: string): Promise<ContractTransactionResponse>;
+    grantRole: (role: string, account: string) => Promise<ContractTransactionResponse>;
+    REPORTER_ROLE: () => Promise<string>;
+    supportedChains: (selector: bigint) => Promise<boolean>;
+    bridgeToken: (token: string, amount: bigint, chainId: number) => Promise<ContractTransactionResponse>;
+    sendMessage: (selector: bigint, target: string, message: string) => Promise<ContractTransactionResponse>;
     
     // Event filters
-    filters: {
-        MarketDataUpdated(): any;
-        TokensSent(): any;
-        MessageSent(): any;
-    };
+    filters: Record<string, (...args: any[]) => any>;
     
     // Query events
-    queryFilter(filter: any): Promise<any[]>;
+    queryFilter: (filter: any) => Promise<any[]>;
     
     // Contract properties
     address: string;
-    connect(signer: any): ITestContract;
-    attach(address: string): ITestContract;
-    deployed(): Promise<ITestContract>;
-    deploymentTransaction(): ContractTransactionResponse;
+    connect: (signer: any) => ITestContract;
+    attach: (address: string) => ITestContract;
+    deployed: () => Promise<ITestContract>;
+    deploymentTransaction: () => ContractTransactionResponse;
 }
 
 type ContractFactory = Awaited<ReturnType<typeof ethers.getContractFactory>>;
