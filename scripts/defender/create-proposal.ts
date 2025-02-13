@@ -16,10 +16,10 @@ async function main() {
 
         const proposal = await client.create({
             contract: {
-                name: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
                 address: process.env.DEFENDER_RELAYER_ADDRESS || '',
                 network: chain.name.toLowerCase()
             },
+            title: `Deploy CCIP Bridge and Reporter on ${chain.name}`,
             description: `Deploys and configures CCIPBridge and Reporter contracts on ${chain.name} (Chain ID: ${chain.id})`,
             type: 'upgrade',
             functionInputs: [],
