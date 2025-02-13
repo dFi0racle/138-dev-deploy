@@ -74,8 +74,8 @@
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=23.7.0",
+    "pnpm": "9.15.1"
   },
   "license": "MIT"
 }
