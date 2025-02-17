@@ -18,8 +18,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@chainlink/functions-toolkit':
-        specifier: 0.2.3
-        version: 0.2.3(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+        specifier: 0.3.2
+        version: 0.3.2(bufferutil@4.0.7)(utf-8-validate@6.0.3)
       '@ensdomains/ens-contracts':
         specifier: ^1.2.5
         version: 1.2.5
@@ -339,8 +339,8 @@ packages:
     resolution: {integrity: sha512-flCawipllF4WcckgISWnbI6AGeEL3NTWOiqbuSMJnk97Im1EG/83i5WPFa0g5Z+JqEVAK3d8L6bXu2F6HUBngQ==}
     hasBin: true
 
-  '@chainlink/functions-toolkit@0.2.3':
-    resolution: {integrity: sha512-euKw7Qj/4avvnzr2AJiqaN/eRjsZOzF5UUWaDfXb60ZYSH39uC6qEA4unL41QHyOQ/oEZoNigjYlDUKZg7a/PQ==}
+  '@chainlink/functions-toolkit@0.3.2':
+    resolution: {integrity: sha512-83SKnDe4E/q7T1ERDKawUkobIYURqS1tfh32xm6Cr1Y/efy+qhcR7wvN95tgTxbk1eNLIX4XFz/2t4AZBBJIow==}
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -1849,6 +1849,10 @@ packages:
     resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
     engines: {node: '>= 0.4'}
 
+  es-set-tostringtag@2.1.0:
+    resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
+    engines: {node: '>= 0.4'}
+
   es6-promise@4.2.8:
     resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==}
 
@@ -2025,8 +2029,8 @@ packages:
     resolution: {integrity: sha512-yDYSgNMraqvnxiEXO4hi88+YZxaHC6QKzb5N84iRCTDeRO7ZALpir/lVmf/uXUhnwUr2O4HU8s/n6x+yNjQkHw==}
     engines: {node: '>= 14.17'}
 
-  form-data@4.0.1:
-    resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
+  form-data@4.0.2:
+    resolution: {integrity: sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w==}
     engines: {node: '>= 6'}
 
   fp-ts@1.19.3:
@@ -4188,7 +4192,7 @@ snapshots:
     dependencies:
       yargs: 17.7.2
 
-  '@chainlink/functions-toolkit@0.2.3(bufferutil@4.0.7)(utf-8-validate@6.0.3)':
+  '@chainlink/functions-toolkit@0.3.2(bufferutil@4.0.7)(utf-8-validate@6.0.3)':
     dependencies:
       axios: 1.7.9
       bcrypto: 5.5.2
@@ -5760,7 +5764,7 @@ snapshots:
   axios@1.7.9:
     dependencies:
       follow-redirects: 1.15.9(debug@4.4.0)
-      form-data: 4.0.1
+      form-data: 4.0.2
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -6322,6 +6326,13 @@ snapshots:
     dependencies:
       es-errors: 1.3.0
 
+  es-set-tostringtag@2.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      get-intrinsic: 1.2.7
+      has-tostringtag: 1.0.2
+      hasown: 2.0.2
+
   es6-promise@4.2.8: {}
 
   escalade@3.2.0: {}
@@ -6567,10 +6578,11 @@ snapshots:
 
   form-data-encoder@2.1.4: {}
 
-  form-data@4.0.1:
+  form-data@4.0.2:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
       mime-types: 2.1.35
 
   fp-ts@1.19.3: {}
