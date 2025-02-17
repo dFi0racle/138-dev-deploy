@@ -44,7 +44,7 @@
     "@openzeppelin/defender-sdk-relay-client": "^2.2.0",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
-    "glob": "^10.3.10",
+    "glob": "^11.0.1",
     "hardhat-gas-reporter": "^2.0.0",
     "only-allow": "^1.2.1",
     "solidity-docgen": "0.6.0-beta.36",
