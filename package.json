@@ -63,7 +63,7 @@
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.20",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.5",
     "chai": "^4.3.10",
     "defender-autotask-client": "1.38.3-rc.0",
     "defender-relay-client": "1.38.3-rc.0",
