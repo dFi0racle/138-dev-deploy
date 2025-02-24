@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@chainlink/contracts':
-        specifier: 0.8.0
-        version: 0.8.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)
+        specifier: 1.3.0
+        version: 1.3.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)
       '@chainlink/contracts-ccip':
         specifier: 1.5.0
         version: 1.5.0(@nomicfoundation/hardhat-verify@2.0.12(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@22.13.4)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@6.0.3)))(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(hardhat@2.22.18(bufferutil@4.0.7)(ts-node@10.9.2(@types/node@22.13.4)(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)
@@ -340,8 +340,9 @@ packages:
     resolution: {integrity: sha512-pz6vhAY6ey5vLjU6mUv7rapRIKXWS2kEhd+J4axdeQhyClfyl+HyzqBTL+Jd/tbekhrfEn2YbkhIZXlovvUk7w==}
     engines: {node: '>=18', pnpm: '>=9'}
 
-  '@chainlink/contracts@0.8.0':
-    resolution: {integrity: sha512-nUv1Uxw5Mn92wgLs2bgPYmo8hpdQ3s9jB/lcbdU0LmNOVu0hbfmouVnqwRLa28Ll50q6GczUA+eO0ikNIKLZsA==}
+  '@chainlink/contracts@1.3.0':
+    resolution: {integrity: sha512-Vk93nijTC5iRFW/L6FKUzeMuJy7k5dNzAtqlHpdreqtzL7efO/qXbYCkqjJFNXGurfOXVehHlehFoH4tWvSbfw==}
+    engines: {node: '>=18', pnpm: '>=9'}
 
   '@chainlink/env-enc@1.0.2':
     resolution: {integrity: sha512-flCawipllF4WcckgISWnbI6AGeEL3NTWOiqbuSMJnk97Im1EG/83i5WPFa0g5Z+JqEVAK3d8L6bXu2F6HUBngQ==}
@@ -350,8 +351,8 @@ packages:
   '@chainlink/functions-toolkit@0.3.2':
     resolution: {integrity: sha512-83SKnDe4E/q7T1ERDKawUkobIYURqS1tfh32xm6Cr1Y/efy+qhcR7wvN95tgTxbk1eNLIX4XFz/2t4AZBBJIow==}
 
-  '@changesets/apply-release-plan@7.0.9':
-    resolution: {integrity: sha512-xB1shQP6WhflnAN+rV8eJ7j4oBgka/K62+pHuEv6jmUtSqlx2ZvJSnCGzyNfkiQmSfVsqXoI3pbAuyVpTbsKzA==}
+  '@changesets/apply-release-plan@7.0.10':
+    resolution: {integrity: sha512-wNyeIJ3yDsVspYvHnEz1xQDq18D9ifed3lI+wxRQRK4pArUcuHgCTrHv0QRnnwjhVCQACxZ+CBih3wgOct6UXw==}
 
   '@changesets/assemble-release-plan@6.0.6':
     resolution: {integrity: sha512-Frkj8hWJ1FRZiY3kzVCKzS0N5mMwWKwmv9vpam7vt8rZjLL1JMthdh6pSDVSPumHPshTTkKZ0VtNbE0cJHZZUg==}
@@ -366,8 +367,8 @@ packages:
     resolution: {integrity: sha512-9o3fOfHYOvBnyEn0mcahB7wzaA3P4bGJf8PNqGit5PKaMEFdsRixik+txkrJWd2VX+O6wRFXpxQL8j/1ANKE9g==}
     hasBin: true
 
-  '@changesets/config@3.1.0':
-    resolution: {integrity: sha512-UbZsPkRnv2SF8Ln72B8opmNLhsazv7/M0r6GSQSQzLY++/ZPr5dDSz3L+6G2fDZ+AN1ZjsEGDdBkpEna9eJtrA==}
+  '@changesets/config@3.1.1':
+    resolution: {integrity: sha512-bd+3Ap2TKXxljCggI0mKPfzCQKeV/TU4yO2h2C6vAihIo8tzseAn2e7klSuiyYYXvgu53zMN1OeYMIQkaQoWnA==}
 
   '@changesets/errors@0.2.0':
     resolution: {integrity: sha512-6BLOQUscTpZeGljvyQXlWOItQyU71kCdGz7Pi8H8zdw6BI0g3m43iL4xKUVPWtG+qrrL9DTjpdn8eYuCQSRpow==}
@@ -378,8 +379,8 @@ packages:
   '@changesets/get-github-info@0.6.0':
     resolution: {integrity: sha512-v/TSnFVXI8vzX9/w3DU2Ol+UlTZcu3m0kXTjTT4KlAdwSvwutcByYwyYn9hwerPWfPkT2JfpoX0KgvCEi8Q/SA==}
 
-  '@changesets/get-release-plan@4.0.7':
-    resolution: {integrity: sha512-FdXJ5B4ZcIWtTu+SEIAthnSScwF+mS+e657gagYUyprVLFSkAJKrA50MqoW3iOopbwQ/UhYaTESNyF9cpg1bQA==}
+  '@changesets/get-release-plan@4.0.8':
+    resolution: {integrity: sha512-MM4mq2+DQU1ZT7nqxnpveDMTkMBLnwNX44cX7NSxlXmr7f8hO6/S2MXNiXG54uf/0nYnefv0cfy4Czf/ZL/EKQ==}
 
   '@changesets/get-version-range-type@0.4.0':
     resolution: {integrity: sha512-hwawtob9DryoGTpixy1D3ZXbGgJu1Rhr+ySH2PvTLHvkZuQ7sRT4oQwMh0hbqZH1weAooedEjRsbrWcGLCeyVQ==}
@@ -427,11 +428,6 @@ packages:
 
   '@ensdomains/solsha1@0.0.3':
     resolution: {integrity: sha512-uhuG5LzRt/UJC0Ux83cE2rCKwSleRePoYdQVcqPN1wyf3/ekMzT/KZUF9+v7/AG5w9jlMLCQkUM50vfjr0Yu9Q==}
-
-  '@eth-optimism/contracts@0.5.40':
-    resolution: {integrity: sha512-MrzV0nvsymfO/fursTB7m/KunkPsCndltVgfdHaT1Aj5Vi6R/doKIGGkOofHX+8B6VMZpuZosKCMQ5lQuqjt8w==}
-    peerDependencies:
-      ethers: ^5
 
   '@eth-optimism/contracts@0.6.0':
     resolution: {integrity: sha512-vQ04wfG9kMf1Fwy3FEMqH2QZbgS0gldKhcBeBUPfO8zu68L61VI97UDXmsMQXzTsEAxK8HnokW3/gosl4/NW3w==}
@@ -832,12 +828,6 @@ packages:
 
   '@openzeppelin/contracts-upgradeable@4.9.3':
     resolution: {integrity: sha512-jjaHAVRMrE4UuZNfDwjlLGDxTHWIOwTJS2ldnc278a0gevfXfPr8hxKEVBGFBE96kl2G3VHDZhUimw/+G3TG2A==}
-
-  '@openzeppelin/contracts@3.4.2':
-    resolution: {integrity: sha512-z0zMCjyhhp4y7XKAcDAi3Vgms4T2PstwBdahiO0+9NaGICQKjynK3wduSRplTgk4LXmoO1yfDGO5RbjKYxtuxA==}
-
-  '@openzeppelin/contracts@4.3.3':
-    resolution: {integrity: sha512-tDBopO1c98Yk7Cv/PZlHqrvtVjlgK5R4J6jxLwoO7qxK4xqOiZG+zSkIvGFpPZ0ikc3QOED3plgdqjgNTnBc7g==}
 
   '@openzeppelin/contracts@4.5.0':
     resolution: {integrity: sha512-fdkzKPYMjrRiPK6K4y64e6GzULR7R7RwxSigHS8DDp7aWDeoReqsQI+cxHV1UuhAqX69L1lAaWDxenfP+xiqzA==}
@@ -1295,6 +1285,9 @@ packages:
 
   '@types/node@22.13.4':
     resolution: {integrity: sha512-ywP2X0DYtX3y08eFVx5fNIw7/uIv8hYUKgXoK8oayJlLnKcRfEYCxWMVE1XagUdVtCJlZT1AU4LXEABW+L1Peg==}
+
+  '@types/node@22.13.5':
+    resolution: {integrity: sha512-+lTU0PxZXn0Dr1NBtC7Y8cR21AJr87dLLU953CWA6pMxxv/UDc7jYAY90upcrie1nRcD6XNG5HOYEDtgW5TxAg==}
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -2067,6 +2060,10 @@ packages:
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
     engines: {node: '>=6'}
+
+  era-contracts@git+https://git@github.com:matter-labs/era-contracts.git#446d391d34bdb48255d5f8fef8a8248925fc98b9:
+    resolution: {commit: 446d391d34bdb48255d5f8fef8a8248925fc98b9, repo: git@github.com:matter-labs/era-contracts.git, type: git}
+    version: 0.1.0
 
   error-ex@1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
@@ -4608,15 +4605,23 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@chainlink/contracts@0.8.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)':
+  '@chainlink/contracts@1.3.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)':
     dependencies:
-      '@eth-optimism/contracts': 0.5.40(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)
-      '@openzeppelin/contracts': 4.3.3
-      '@openzeppelin/contracts-upgradeable-4.7.3': '@openzeppelin/contracts-upgradeable@4.7.3'
-      '@openzeppelin/contracts-v0.7': '@openzeppelin/contracts@3.4.2'
+      '@arbitrum/nitro-contracts': 1.1.1
+      '@arbitrum/token-bridge-contracts': 1.1.2
+      '@changesets/changelog-github': 0.5.1
+      '@changesets/cli': 2.27.12
+      '@eth-optimism/contracts': 0.6.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)
+      '@openzeppelin/contracts': 4.9.3
+      '@openzeppelin/contracts-upgradeable': 4.9.3
+      '@scroll-tech/contracts': 0.1.0
+      '@zksync/contracts': era-contracts@git+https://git@github.com:matter-labs/era-contracts.git#446d391d34bdb48255d5f8fef8a8248925fc98b9
+      semver: 7.7.1
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - ethers
+      - supports-color
       - utf-8-validate
 
   '@chainlink/env-enc@1.0.2':
@@ -4637,9 +4642,9 @@ snapshots:
       - debug
       - utf-8-validate
 
-  '@changesets/apply-release-plan@7.0.9':
+  '@changesets/apply-release-plan@7.0.10':
     dependencies:
-      '@changesets/config': 3.1.0
+      '@changesets/config': 3.1.1
       '@changesets/get-version-range-type': 0.4.0
       '@changesets/git': 3.0.2
       '@changesets/should-skip-package': 0.1.2
@@ -4676,13 +4681,13 @@ snapshots:
 
   '@changesets/cli@2.27.12':
     dependencies:
-      '@changesets/apply-release-plan': 7.0.9
+      '@changesets/apply-release-plan': 7.0.10
       '@changesets/assemble-release-plan': 6.0.6
       '@changesets/changelog-git': 0.2.1
-      '@changesets/config': 3.1.0
+      '@changesets/config': 3.1.1
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.1.3
-      '@changesets/get-release-plan': 4.0.7
+      '@changesets/get-release-plan': 4.0.8
       '@changesets/git': 3.0.2
       '@changesets/logger': 0.1.1
       '@changesets/pre': 2.0.2
@@ -4705,7 +4710,7 @@ snapshots:
       spawndamnit: 3.0.1
       term-size: 2.2.1
 
-  '@changesets/config@3.1.0':
+  '@changesets/config@3.1.1':
     dependencies:
       '@changesets/errors': 0.2.0
       '@changesets/get-dependents-graph': 2.1.3
@@ -4733,10 +4738,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@changesets/get-release-plan@4.0.7':
+  '@changesets/get-release-plan@4.0.8':
     dependencies:
       '@changesets/assemble-release-plan': 6.0.6
-      '@changesets/config': 3.1.0
+      '@changesets/config': 3.1.1
       '@changesets/pre': 2.0.2
       '@changesets/read': 0.6.3
       '@changesets/types': 6.1.0
@@ -4813,16 +4818,6 @@ snapshots:
   '@ensdomains/solsha1@0.0.3':
     dependencies:
       hash-test-vectors: 1.3.2
-
-  '@eth-optimism/contracts@0.5.40(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)':
-    dependencies:
-      '@eth-optimism/core-utils': 0.12.0(bufferutil@4.0.7)(utf-8-validate@6.0.3)
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      ethers: 6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@eth-optimism/contracts@0.6.0(bufferutil@4.0.7)(ethers@6.13.5(bufferutil@4.0.7)(utf-8-validate@6.0.3))(utf-8-validate@6.0.3)':
     dependencies:
@@ -5483,10 +5478,6 @@ snapshots:
   '@openzeppelin/contracts-upgradeable@4.8.3': {}
 
   '@openzeppelin/contracts-upgradeable@4.9.3': {}
-
-  '@openzeppelin/contracts@3.4.2': {}
-
-  '@openzeppelin/contracts@4.3.3': {}
 
   '@openzeppelin/contracts@4.5.0': {}
 
@@ -6219,13 +6210,17 @@ snapshots:
 
   '@types/mkdirp@0.5.2':
     dependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.5
 
   '@types/mocha@10.0.10': {}
 
   '@types/node@12.20.55': {}
 
   '@types/node@22.13.4':
+    dependencies:
+      undici-types: 6.20.0
+
+  '@types/node@22.13.5':
     dependencies:
       undici-types: 6.20.0
 
@@ -6243,7 +6238,7 @@ snapshots:
 
   '@types/resolve@0.0.8':
     dependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.5
 
   '@types/secp256k1@4.0.6':
     dependencies:
@@ -7132,6 +7127,8 @@ snapshots:
   entities@4.5.0: {}
 
   env-paths@2.2.1: {}
+
+  era-contracts@git+https://git@github.com:matter-labs/era-contracts.git#446d391d34bdb48255d5f8fef8a8248925fc98b9: {}
 
   error-ex@1.3.2:
     dependencies:
