@@ -130,11 +130,11 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       prettier:
-        specifier: ^3.4.2
-        version: 3.5.1
+        specifier: ^3.5.2
+        version: 3.5.2
       prettier-plugin-solidity:
         specifier: ^1.4.2
-        version: 1.4.2(prettier@3.5.1)
+        version: 1.4.2(prettier@3.5.2)
       solhint:
         specifier: ^5.0.5
         version: 5.0.5(typescript@5.7.3)
@@ -1295,6 +1295,9 @@ packages:
 
   '@types/node@22.13.4':
     resolution: {integrity: sha512-ywP2X0DYtX3y08eFVx5fNIw7/uIv8hYUKgXoK8oayJlLnKcRfEYCxWMVE1XagUdVtCJlZT1AU4LXEABW+L1Peg==}
+
+  '@types/node@22.13.5':
+    resolution: {integrity: sha512-+lTU0PxZXn0Dr1NBtC7Y8cR21AJr87dLLU953CWA6pMxxv/UDc7jYAY90upcrie1nRcD6XNG5HOYEDtgW5TxAg==}
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -3234,8 +3237,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.5.1:
-    resolution: {integrity: sha512-hPpFQvHwL3Qv5AdRvBFMhnKo4tYxp0ReXiPn2bxkiohEX6mBeBwEpBSQTkD458RaaDKQMYSp4hX4UtfUTA5wDw==}
+  prettier@3.5.2:
+    resolution: {integrity: sha512-lc6npv5PH7hVqozBR7lkBNOGXV9vMwROAPlumdBkX0wTbbzPu/U1hk5yL8p2pt4Xoc+2mkT8t/sow2YrV/M5qg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6219,13 +6222,17 @@ snapshots:
 
   '@types/mkdirp@0.5.2':
     dependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.5
 
   '@types/mocha@10.0.10': {}
 
   '@types/node@12.20.55': {}
 
   '@types/node@22.13.4':
+    dependencies:
+      undici-types: 6.20.0
+
+  '@types/node@22.13.5':
     dependencies:
       undici-types: 6.20.0
 
@@ -6243,7 +6250,7 @@ snapshots:
 
   '@types/resolve@0.0.8':
     dependencies:
-      '@types/node': 22.13.4
+      '@types/node': 22.13.5
 
   '@types/secp256k1@4.0.6':
     dependencies:
@@ -8441,15 +8448,15 @@ snapshots:
 
   prelude-ls@1.1.2: {}
 
-  prettier-plugin-solidity@1.4.2(prettier@3.5.1):
+  prettier-plugin-solidity@1.4.2(prettier@3.5.2):
     dependencies:
       '@solidity-parser/parser': 0.19.0
-      prettier: 3.5.1
+      prettier: 3.5.2
       semver: 7.7.1
 
   prettier@2.8.8: {}
 
-  prettier@3.5.1: {}
+  prettier@3.5.2: {}
 
   process-nextick-args@2.0.1: {}
 
